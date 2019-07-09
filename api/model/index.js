@@ -7,6 +7,19 @@ const User = function(user) {
   this.password = user.password;
 };
 
+User.auth = function(user, result) {
+  const { userName, password } = user;
+  mysqlConnection.query("SELECT * FROM users WHERE userName = ? AND password = ?", [userName, password], function(err, res) {
+    if(err) {
+      console.log(err);
+      result(err, null);
+    } else {
+      console.log(res);
+      result(null, res);
+    }
+  });
+};
+
 User.newUser = function(newUser, result) {
   mysqlConnection.query("INSERT INTO users set ?", newUser, function(err, res) {
     if(err) {
