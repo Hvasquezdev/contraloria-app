@@ -17,7 +17,7 @@ function login(username, password) {
     body: JSON.stringify({ username, password })
   };
 
-  return fetch('/users/authenticate', requestOptions)
+  return fetch(`127.0.0.1:3306/users/authenticate`, requestOptions)
     .then(handleResponse)
     .then((user) => {
       if(user.token) {
@@ -84,6 +84,7 @@ function _delete(id) {
 
 function handleResponse(response) {
   return response.text().then((text) => {
+    console.log(text)
     const data = text && JSON.parse(text);
     
     if(!response.ok) {

@@ -10,8 +10,9 @@
             class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
             id="userName" 
             type="text" 
-            v-model="user.userName"
+            v-model="user.username"
             placeholder="Nombre de usuario"
+            @keyup.enter="handleSubmit"
           >
           <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
         </div>
@@ -22,13 +23,20 @@
           <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-password">
             Password
           </label>
-          <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="password" placeholder="******************">
+          <input 
+            class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+            id="grid-password" 
+            type="password" 
+            v-model="user.password"
+            placeholder="******************"
+            @keyup.enter="handleSubmit"
+          >
           <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
         </div>
       </div>
 
       <div class="flex items-center justify-between">
-        <button @click="$router.push('/chat')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+        <button @click="handleSubmit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
           Iniciar Sesion
         </button>
         <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
@@ -41,6 +49,7 @@
 
 <script>
 import DefaultLayout from "@/layouts/Default.vue";
+import { mapActions } from 'vuex';
 
 export default {
   name: 'login-page',
@@ -50,8 +59,17 @@ export default {
   data() {
     return {
       user: {
-        userName: null,
+        username: null,
         password: null,
+      }
+    }
+  },
+  methods: {
+    ...mapActions('account', ['login']),
+    handleSubmit() {
+      const { username, password } = this.user;
+      if(username && password) {
+        this.login({ username, password });
       }
     }
   },
