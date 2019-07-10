@@ -14,7 +14,7 @@ User.auth = function(user, result) {
       console.log(err);
       result(err, null);
     } else {
-      console.log(res);
+      console.log('res', res);
       result(null, res);
     }
   });

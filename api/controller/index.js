@@ -2,7 +2,7 @@ const User = require('../model/index');
 
 exports.auth_user = function(req, res) {
   const { userName, password } = req.body;
-  console.log('Controller auth');
+  console.log('Controller auth', req.body);
 
   if (!userName || !password) {
     res.status(400).send({ error: true, message: 'Please provide the username and password' });
@@ -11,6 +11,7 @@ exports.auth_user = function(req, res) {
       if(err) {
         res.send(err);
       } else {
+        console.log('user', user)
         res.json(user);
       }
     });

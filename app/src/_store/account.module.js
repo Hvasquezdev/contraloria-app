@@ -41,10 +41,10 @@ const mutations = {
 };
 
 const actions = {
-  login({ dispatch, commit }, { username, password }) {
-    commit('loginRequest', { username });
+  login({ dispatch, commit }, { userName, password }) {
+    commit('loginRequest', { userName });
 
-    userService.login(username, password)
+    userService.login(userName, password)
       .then((user) => {
         commit('loginSuccess', user);
         router.push('/');

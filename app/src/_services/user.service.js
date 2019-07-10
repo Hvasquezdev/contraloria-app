@@ -10,16 +10,17 @@ export const userService = {
   delete: _delete
 };
 
-function login(username, password) {
+function login(userName, password) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ userName, password })
   };
 
-  return fetch(`127.0.0.1:3306/users/authenticate`, requestOptions)
+  return fetch(`http://localhost:3001/user/authenticate`, requestOptions)
     .then(handleResponse)
     .then((user) => {
+      console.log(user);
       if(user.token) {
         localStorage.setItem('user', JSON.stringify(user));
       }
@@ -84,7 +85,6 @@ function _delete(id) {
 
 function handleResponse(response) {
   return response.text().then((text) => {
-    console.log(text)
     const data = text && JSON.parse(text);
     
     if(!response.ok) {
