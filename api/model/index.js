@@ -9,13 +9,28 @@ const User = function(user) {
 
 User.auth = function(user, result) {
   const { userName, password } = user;
-  mysqlConnection.query("SELECT * FROM users WHERE userName = ? AND password = ?", [userName, password], function(err, res) {
+  mysqlConnection.query("SELECT * FROM users WHERE userName = ? AND password = ?", [userName, password], function(err, userData) {
     if(err) {
       console.log(err);
       result(err, null);
     } else {
-      console.log('res', res);
-      result(null, res);
+      const userId = userData[0].id;
+      const data = userData;
+
+      mysqlConnection.query("SELECT * FROM rol WHERE userId = ?", [userId], function(err, rol) {
+        if(err) {
+          console.log(err);
+          result(err, null);
+        } else {
+          const user = {
+            data: data,
+            rol: rol
+          };
+  
+          console.log('res', user);
+          result(null, user);
+        }
+      });
     }
   });
 };

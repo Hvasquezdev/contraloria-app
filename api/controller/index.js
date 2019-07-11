@@ -11,7 +11,6 @@ exports.auth_user = function(req, res) {
       if(err) {
         res.send(err);
       } else {
-        console.log('user', user)
         res.json(user);
       }
     });
