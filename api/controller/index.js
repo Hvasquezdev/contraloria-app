@@ -1,4 +1,4 @@
-const User = require('../model/index');
+const { User, Rol } = require('../model/index');
 
 exports.auth_user = function(req, res) {
   const { userName, password } = req.body;
@@ -24,13 +24,41 @@ exports.new_user = function(req, res) {
   if(!newUser.name || !newUser.lastName || !newUser.userName || !newUser.password) {
     res.status(400).send({ error: true, message: 'Please provide the complete user data' });
   } else {
-    User.newUser(newUser, function(err, user) {
+
+    // Checking if the username isn't taken
+    User.checkUserName(newUser.userName, function(err, user) {
       if(err) {
         res.send(err);
       } else {
-        res.json(user);
+        if(user.length >= 1) return res.status(400).send({ error: true, message: 'Username is already registered' });
+        
+        // If username is not taken then save the user
+        User.newUser(newUser, function(err, user) {
+          if(err) {
+            res.send(err);
+          } else {
+            
+            const rolData = {
+              name: 'user',
+              status: 'active',
+              userId: user
+            };
+
+            // Saving rol of the user with the registered user ID
+            Rol.newRol(rolData, function(err, rol) {
+              if(err) {
+                res.send(err);
+              } else {
+                res.status(200).send({ error: false, message: 'User registered correctly', rol });
+              }
+            });
+
+          }
+        });
+
       }
     });
+
   }
 };
 

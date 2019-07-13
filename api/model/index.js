@@ -7,6 +7,12 @@ const User = function(user) {
   this.password = user.password;
 };
 
+const Rol = function(data) {
+  this.name = data.name;
+  this.status = data.status;
+  this.userId = data.userId;
+}
+
 User.auth = function(user, result) {
   const { userName, password } = user;
   mysqlConnection.query("SELECT * FROM users WHERE userName = ? AND password = ?", [userName, password], function(err, userData) {
@@ -41,11 +47,21 @@ User.newUser = function(newUser, result) {
       console.log(err);
       result(err, null);
     } else {
-      console.log(res.insertId);
       result(null, res.insertId);
     }
   });
 };
+
+User.checkUserName = function(userName, result) {
+  mysqlConnection.query("SELECT id FROM users WHERE userName = ?", [userName], function(err, res) {
+    if(err) {
+      console.log(err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
 
 User.getAll = function(result) {
   mysqlConnection.query("SELECT * FROM users", function(err, res) {
@@ -58,4 +74,18 @@ User.getAll = function(result) {
   });
 };
 
-module.exports = User;
+Rol.newRol = function(data, result) {
+  mysqlConnection.query("INSERT INTO rol set ?", [data], function(err, res) {
+    if(err) {
+      console.log(err);
+      result(err, null);
+    } else {
+      result(null, res.insertId);
+    }
+  });
+}
+
+module.exports = {
+  User,
+  Rol
+};
