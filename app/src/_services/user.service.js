@@ -21,7 +21,7 @@ function login(userName, password) {
     .then(handleResponse)
     .then((user) => {
       console.log(user);
-      if(user.token) {
+      if(user.data.token) {
         localStorage.setItem('user', JSON.stringify(user));
       }
 

@@ -29,11 +29,21 @@ User.auth = function(user, result) {
           result(err, null);
         } else {
           const user = {
-            data: data,
-            rol: rol
+            data: {
+              id: data[0].id,
+              name: data[0].name,
+              lastName: data[0].lastName,
+              userName: data[0].userName,
+              token: 'fake-jwt-token'
+            },
+            rol: {
+              id: rol[0].id,
+              name: rol[0].name,
+              status: rol[0].status
+            }
           };
+          console.log(user)
   
-          console.log('res', user);
           result(null, user);
         }
       });

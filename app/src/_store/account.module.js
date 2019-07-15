@@ -47,7 +47,7 @@ const actions = {
     userService.login(userName, password)
       .then((user) => {
         commit('loginSuccess', user);
-        router.push('/');
+        router.push('/chat');
       },
       (error) => {
         commit('loginFailure', error);
@@ -58,6 +58,7 @@ const actions = {
   logout({ commit }) {
     userService.logout();
     commit('logout');
+    router.push('/');
   },
 
   register({ dispatch, commit }, user) {

@@ -3,9 +3,9 @@
     <nav class="container mx-auto flex items-center justify-between flex-wrap py-3">
       <div class="flex items-center flex-no-shrink text-white mr-6">
         <h1 class="text-black text-2xl p-2 align-middle font-sans relative pl-8">
-          <a href class="no-underline text-black flex items-center">
+          <router-link to="/" tag="a" class="no-underline text-black flex items-center">
             <span class="pl-1">Contraloria del Municipio Heres</span>
-          </a>
+          </router-link>
         </h1>
       </div>
       <div class="block lg:hidden">
@@ -39,6 +39,13 @@
     </nav>
   </header>
 </template>
+
+<script>
+export default {
+  name: 'the-navbar',
+}
+</script>
+
 
 <style lang="scss">
 header {

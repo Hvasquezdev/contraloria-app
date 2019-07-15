@@ -25,7 +25,10 @@ export const router = new Router({
       path: '/chat',
       name: 'chat',
       component: () => import('@/views/Chat.vue'),
-    }
+    },
+
+    // otherwise redirect to home
+    { path: '*', redirect: '/' }
   ]
 });
 
@@ -36,6 +39,8 @@ router.beforeEach((to, from, next) => {
 
   if(authRequired && !loggedIn) {
     return next('/login');
+  } else if (!authRequired && loggedIn) {
+    return next('/chat');
   }
 
   next();
