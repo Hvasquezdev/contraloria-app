@@ -1,10 +1,10 @@
 <template>
   <div class="border-b flex px-6 py-2 items-center flex-none">
     <div class="flex flex-col">
-      <h3 class="text-grey-darkest mb-1 font-extrabold">#Nombre Dep</h3>
+      <h3 class="text-grey-darkest mb-1 font-extrabold">#Departamento Uno</h3>
       <div
         class="text-grey-dark text-sm truncate"
-      >Descripción del departamento o canal.</div>
+      >Describiendo departamento uno</div>
     </div>
     <div class="ml-auto hidden md:block">
       <div class="relative flex items-center">

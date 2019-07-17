@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-indigo-900 text-purple-lighter flex-none w-64 pb-6 hidden md:block">
-    <div class="text-white mb-2 mt-3 px-4 flex justify-between">
+  <div class="bg-gray-900 text-purple-lighter flex-none w-64 pb-6 hidden md:block">
+    <div class="text-white mb-4 px-4 pb-4 flex justify-between user-data__container">
       <div class="flex-auto">
         <h1 class="font-semibold text-xl leading-tight mb-1 truncate capitalize">{{ user.data.name }} {{ user.data.lastName }}</h1>
-        <div class="flex items-center mb-6">
+        <div class="flex items-center">
           <span class="text-white opacity-50 text-sm">@{{ user.data.userName }}</span>
         </div>
       </div>
@@ -20,7 +20,7 @@
     </div>
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
-        <div class="opacity-75">Departamentos</div>
+        <div class="opacity-75">Canales Privados</div>
         <div>
           <svg
             class="fill-current h-4 w-4 opacity-50"
@@ -33,11 +33,11 @@
           </svg>
         </div>
       </div>
-      <div class="bg-teal-dark py-1 px-4 text-white"># Nombre dep</div>
+      <div class="bg-blue-900 py-1 px-4 text-white cursor-pointer">#Departamento Uno</div>
     </div>
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
-        <div class="opacity-75">Canales</div>
+        <div class="opacity-75">Canales Publicos</div>
         <div>
           <svg
             class="fill-current h-4 w-4 opacity-50"
@@ -50,7 +50,7 @@
           </svg>
         </div>
       </div>
-      <div class="bg-teal-dark py-1 px-4 text-white"># Nombre Canal</div>
+      <div class="bg-teal-dark py-1 px-4 text-white cursor-pointer">#Publico Uno</div>
     </div>
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
@@ -67,15 +67,7 @@
           </svg>
         </div>
       </div>
-      <div class="flex items-center mb-3 px-4">
-        <span class="bg-green-500 rounded-full block w-2 h-2 mr-2"></span>
-        <span class="text-white opacity-75">
-          Hector Vasquez
-          <span class="text-grey text-sm">(Tu)</span>
-        </span>
-      </div>
       <div class="flex items-center px-4 mb-6 opacity-50">
-        <span class="border border-white rounded-full w-2 h-2 mr-2"></span>
         <span class="text-white">Ronaldo Cardenas</span>
       </div>
     </div>
@@ -98,3 +90,12 @@ export default {
   },
 }
 </script>
+
+<style>
+.user-data__container {
+  background: hsl(0, 0%, 14%);
+  margin-top: 0;
+  padding-top: .75rem;
+  box-shadow: 0 6px 6px rgba(0,0,0,.16);
+}
+</style>
