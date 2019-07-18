@@ -1,9 +1,12 @@
 <template>
   <default-layout class="register-page">
+    <h1 class="mb-6">
+      Registrate para ingresar a la intranet
+    </h1>
     <div class="register-form-container">
-      <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="flex flex-wrap -mx-3 mb-4">
         <div class="w-full px-3">
-          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="userName">
+          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left" for="userName">
             Nombre de usuario
           </label>
           <input 
@@ -13,13 +16,12 @@
             v-model="user.userName"
             placeholder="Nombre de usuario"
           >
-          <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
         </div>
       </div>
 
-      <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="flex flex-wrap -mx-3 mb-4">
         <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-          <label for="name" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+          <label for="name" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left">
             Nombre
           </label>
           <input 
@@ -29,12 +31,9 @@
             v-model="user.name"
             placeholder="Nombre"  
           >
-          <p class="text-red-500 text-xs italic">
-            Please fill out this field
-          </p>
         </div>
-        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-          <label for="lastName" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+        <div class="w-full md:w-1/2 px-3 mb-4 md:mb-0">
+          <label for="lastName" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left">
             Apellido
           </label>
           <input 
@@ -44,19 +43,15 @@
             v-model="user.lastName"
             placeholder="Apellido"  
           >
-          <p class="text-red-500 text-xs italic">
-            Please fill out this field
-          </p>
         </div>
       </div>
 
-      <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="flex flex-wrap -mx-3 mb-4">
         <div class="w-full px-3">
-          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-password">
+          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left" for="grid-password">
             Password
           </label>
           <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="password" placeholder="******************">
-          <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
         </div>
       </div>
 
@@ -81,6 +76,9 @@ export default {
   components: {
     DefaultLayout
   },
+  created() {
+    this.$parent.$emit('update:layout', DefaultLayout);
+  },
   data() {
     return {
       user: {
@@ -100,9 +98,8 @@ export default {
   background-color: #f8f8f8;
 
   .register-form-container {
+    width: 100%;
     max-width: 650px;
-    margin: auto;
-    margin-top: 50px;
     background: #fff;
     border-radius: 14px;
     border: 1px solid #ddd;

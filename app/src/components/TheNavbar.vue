@@ -5,7 +5,7 @@
 
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item active"><a href="index.html" class="nav-link">Inicio</a></li>
+          <li class="nav-item active"><router-link to="/" tag="a" class="nav-link">Inicio</router-link></li>
           <li class="nav-item"><a href="#" class="nav-link">Mision</a></li>
           <li class="nav-item"><a href="#" class="nav-link">Vision</a></li>
           <li class="nav-item cta"><router-link to="/register" class="nav-link"><span>Registrarse</span></router-link></li>
@@ -23,10 +23,6 @@ export default {
 
 
 <style lang="scss">
-header {
-  background: #fff;
-  z-index: 99;
-}
 @mixin border-radius($radius) {
   -webkit-border-radius: $radius;
      -moz-border-radius: $radius;
@@ -64,7 +60,7 @@ nav .container {
 	position: absolute;
 	left: 0;
 	right: 0;
-	z-index: 3;
+	z-index: 15;
 	top: 30px;
 
 	.navbar-brand {

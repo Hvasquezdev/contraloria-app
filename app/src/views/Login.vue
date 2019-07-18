@@ -1,9 +1,12 @@
 <template>
   <default-layout class="login-page">
+    <h1 class="mb-6">
+      Ingresa tus datos para iniciar sesion
+    </h1>
     <div class="login-form-container">
-      <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="flex flex-wrap -mx-3 mb-4">
         <div class="w-full px-3">
-          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="userName">
+          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left" for="userName">
             Nombre de usuario
           </label>
           <input 
@@ -14,13 +17,12 @@
             placeholder="Nombre de usuario"
             @keyup.enter="handleSubmit"
           >
-          <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
         </div>
       </div>
 
-      <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="flex flex-wrap -mx-3 mb-4">
         <div class="w-full px-3">
-          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-password">
+          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left" for="grid-password">
             Password
           </label>
           <input 
@@ -31,7 +33,6 @@
             placeholder="******************"
             @keyup.enter="handleSubmit"
           >
-          <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
         </div>
       </div>
 
@@ -43,6 +44,7 @@
           ¿Olvidaste tu contraseña?
         </a>
       </div>
+      <p class="text-red-600 text-xs italic pt-6" v-if="this.errors">{{ errors }}}</p>
     </div>
   </default-layout>
 </template>
@@ -61,7 +63,8 @@ export default {
       user: {
         userName: null,
         password: null,
-      }
+      },
+      errors: null,
     }
   },
   methods: {
@@ -69,7 +72,10 @@ export default {
     handleSubmit() {
       const { userName, password } = this.user;
       if(userName && password) {
+        this.errors = null;
         this.login({ userName, password });
+      } else {
+        this.errors = 'Por favor rellene todos los campos'
       }
     }
   },
@@ -82,9 +88,8 @@ export default {
   background-color: #f8f8f8;
 
   .login-form-container {
+    width: 100%;
     max-width: 450px;
-    margin: auto;
-    margin-top: 50px;
     background: #fff;
     border-radius: 14px;
     border: 1px solid #ddd;
