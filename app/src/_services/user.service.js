@@ -41,7 +41,7 @@ function register(user) {
     body: JSON.stringify(user),
   };
 
-  return fetch('/users/register', requestOptions).then(handleResponse);
+  return fetch('http://localhost:3001/users', requestOptions).then(handleResponse);
 }
 
 function getAll() {

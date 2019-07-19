@@ -13,7 +13,8 @@
             class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
             id="userName" 
             type="text" 
-            v-model="user.userName"
+            v-model.trim="user.userName"
+            @keyup.enter="handleSubmit"
             placeholder="Nombre de usuario"
           >
         </div>
@@ -28,7 +29,8 @@
             type="text" 
             class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="name"
-            v-model="user.name"
+            v-model.trim="user.name"
+            @keyup.enter="handleSubmit"
             placeholder="Nombre"  
           >
         </div>
@@ -40,7 +42,8 @@
             type="text" 
             class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="lastName"
-            v-model="user.lastName"
+            v-model.trim="user.lastName"
+            @keyup.enter="handleSubmit"
             placeholder="Apellido"  
           >
         </div>
@@ -51,12 +54,19 @@
           <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left" for="grid-password">
             Password
           </label>
-          <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="password" placeholder="******************">
+          <input 
+            class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+            id="grid-password" 
+            type="password" 
+            v-model.trim="user.password"
+            @keyup.enter="handleSubmit"
+            placeholder="******************"
+          >
         </div>
       </div>
 
       <div class="flex items-center justify-between">
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" @click="handleSubmit">
           Registrarse
         </button>
         <div class="inline-block align-baseline text-sm">
@@ -70,14 +80,12 @@
 
 <script>
 import DefaultLayout from "@/layouts/Default.vue";
+import { mapActions } from 'vuex';
 
 export default {
   name: 'register-page',
   components: {
     DefaultLayout
-  },
-  created() {
-    this.$parent.$emit('update:layout', DefaultLayout);
   },
   data() {
     return {
@@ -86,6 +94,25 @@ export default {
         lastName: null,
         userName: null,
         password: null,
+      },
+      errors: null
+    }
+  },
+  methods: {
+    ...mapActions('account', ['register']),
+    handleSubmit() {
+      const userData = {
+        name: this.user.name.toLowerCase(),
+        lastName: this.user.lastName.toLowerCase(),
+        userName: this.user.userName.toLowerCase(),
+        password: this.user.password.toLowerCase()
+      };
+
+      if(this.user.name && this.user.lastName && this.user.userName && this.user.password) {
+        this.errors = null;
+        this.register(userData);
+      } else {
+        this.errors = 'Por favor rellene todos los campos'
       }
     }
   },

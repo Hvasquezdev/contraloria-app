@@ -57,7 +57,15 @@ User.newUser = function(newUser, result) {
       console.log(err);
       result(err, null);
     } else {
-      result(null, res.insertId);
+      const userId = res.insertId;
+      mysqlConnection.query("INSERT INTO rol set ?", [userId], function(err, res) {
+        if(err) {
+          console.log(err);
+          result(err, null);
+        } else {
+          result(null, res.insertId);
+        }
+      });
     }
   });
 };
