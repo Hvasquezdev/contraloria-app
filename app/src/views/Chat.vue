@@ -12,7 +12,7 @@
         <!-- A message -->
         <div class="flex items-start mb-2 text-sm pb-2 message-container">
           <img
-            src="https://i.pravatar.cc/400"
+            src="https://colewest.com/wp-content/uploads/2016/12/user-placeholder.jpg"
             class="w-10 h-10 rounded mr-3"
           />
           <div class="flex-1 overflow-hidden">
@@ -31,7 +31,7 @@
         <!-- A message -->
         <div class="flex items-start mb-2 text-sm pb-2 message-container">
           <img
-            src="https://i.pravatar.cc/400"
+            src="https://colewest.com/wp-content/uploads/2016/12/user-placeholder.jpg"
             class="w-10 h-10 rounded mr-3"
           />
           <div class="flex-1 overflow-hidden">
@@ -52,7 +52,7 @@
         <!-- A message -->
         <div class="flex items-start mb-2 text-sm pb-2 message-container">
           <img
-            src="https://i.pravatar.cc/400"
+            src="https://colewest.com/wp-content/uploads/2016/12/user-placeholder.jpg"
             class="w-10 h-10 rounded mr-3"
           />
           <div class="flex-1 overflow-hidden">
@@ -72,8 +72,8 @@
         </div>
       </div>
       <div class="pb-6 px-6 flex-none">
-        <div class="flex rounded-lg border-2 border-grey overflow-hidden">
-          <span class="text-3xl text-grey border-r-2 border-grey p-2">
+        <div class="flex rounded-lg border-2 border-gray-600 overflow-hidden">
+          <span class="text-3xl text-green-900 border-r-2 border-gray-600 p-2 cursor-pointer">
             <svg
               class="fill-current h-6 w-6 block"
               xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +84,7 @@
               />
             </svg>
           </span>
-          <input type="text" class="w-full px-4" placeholder="Mensaje en #Nombre dep" />
+          <input type="text" class="w-full px-4 text-gray-900" placeholder="Escribe tu mensaje" />
         </div>
       </div>
     </div>
