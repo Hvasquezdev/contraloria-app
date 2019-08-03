@@ -3,6 +3,9 @@
     <!-- Sidebar / channel list -->
     <chat-sidebar :user="user"></chat-sidebar>
 
+    <!-- Dialog / New Channel Form -->
+    <new-channel-dialog v-if="showNewChannelDialog"></new-channel-dialog>
+
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
       <!-- Top bar -->
@@ -94,6 +97,7 @@
 <script>
 const ChatNavbar = () => import('@/components/chat/Navbar.vue');
 const ChatSidebar = () => import('@/components/chat/Sidebar.vue');
+const NewChannelDialog = () => import('@/components/base-components/BaseDialog.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -104,11 +108,17 @@ export default {
   name: 'chat-page',
   components: {
     ChatNavbar,
-    ChatSidebar
+    ChatSidebar,
+    NewChannelDialog
   },
   data() {
     return {
       user: null,
+    }
+  },
+  computed: {
+    showNewChannelDialog() {
+      return this.$store.state.dialogs.isOpen.newChannel
     }
   },
 };

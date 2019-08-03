@@ -21,7 +21,7 @@
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
         <div class="opacity-75">Canales Privados</div>
-        <div>
+        <div class="add-channel-btn" @click="openNewChannelDialog">
           <svg
             class="fill-current h-4 w-4 opacity-50"
             xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +38,7 @@
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
         <div class="opacity-75">Canales Publicos</div>
-        <div>
+        <div class="add-channel-btn" @click="openNewChannelDialog">
           <svg
             class="fill-current h-4 w-4 opacity-50"
             xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
         <div class="opacity-75">Mensajes directos</div>
-        <div>
+        <div class="add-channel-btn">
           <svg
             class="fill-current h-4 w-4 opacity-50"
             xmlns="http://www.w3.org/2000/svg"
@@ -86,6 +86,9 @@ export default {
   methods: {
     logOut() {
       this.$store.dispatch('account/logout');
+    },
+    openNewChannelDialog() {
+      this.$store.dispatch('dialogs/toggleNewChannelDialog', true);
     }
   },
 }
@@ -97,5 +100,9 @@ export default {
   margin-top: 0;
   padding-top: .75rem;
   box-shadow: 0 6px 6px rgba(0,0,0,.16);
+}
+.add-channel-btn {
+  cursor: pointer;
+  padding: 0 10px;
 }
 </style>
