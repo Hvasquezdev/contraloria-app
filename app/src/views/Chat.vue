@@ -1,7 +1,7 @@
 <template>
   <div class="font-sans antialiased h-screen flex" v-if="user">
     <!-- Sidebar / channel list -->
-    <chat-sidebar :user="user"></chat-sidebar>
+    <chat-sidebar :user="user" :channels="channel_list" v-if="channel_list && user"></chat-sidebar>
 
     <!-- Dialog / New Channel Form -->
     <new-channel-dialog v-if="showNewChannelDialog"></new-channel-dialog>
@@ -110,7 +110,10 @@ export default {
     this.$store.dispatch('channel/getChannelsByUser', 1)
       .then(channels => {
         this.$store.dispatch('channel/getChannelsDataByUser', channels)
-          .then((channel_list) => this.channel_list = channel_list);
+          .then(() => {
+            const channels = this.$store.state.channel.userChannels;
+            this.channel_list = channels;
+          });
       });
   },
   components: {

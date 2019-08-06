@@ -3,7 +3,9 @@ import { channelService } from '../_services';
 const state = {
   status: {
     registering: false
-  }
+  },
+  userChannels: null,
+  inChannel: null
 }
 
 const mutations = {
@@ -17,6 +19,12 @@ const mutations = {
 
   registerFailure(state) {
     state.status = { registering: false };
+  },
+  setUserChannels(state, channelData) {
+    state.userChannels = channelData;
+  },
+  setSelectedChannel(state, channel) {
+    state.inChannel = channel;
   }
 };
 
@@ -37,7 +45,7 @@ const actions = {
         dispatch('alert/error', error, { root: true });
       });
   },
-  getChannelsByUser({ commit }, userId) {
+  getChannelsByUser(context, userId) {
     return channelService.getByUserId(userId)
       .then((channels) => {
         return channels;
@@ -47,9 +55,13 @@ const actions = {
   getChannelsDataByUser({ commit }, data) {
     return channelService.getDataByUser(data)
       .then((channelData) => {
+        commit('setUserChannels', channelData);
         return channelData;
       },
       (error) => console.log(error));
+  },
+  setSelectedChannel({ commit }, channel) {
+    commit('setSelectedChannel', channel);
   }
 };
 

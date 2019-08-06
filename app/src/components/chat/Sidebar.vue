@@ -20,7 +20,7 @@
     </div>
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
-        <div class="opacity-75">Canales Privados</div>
+        <div class="opacity-75 font-semibold">Canales Privados</div>
         <div class="add-channel-btn" @click="openNewChannelDialog">
           <svg
             class="fill-current h-4 w-4 opacity-50"
@@ -33,11 +33,20 @@
           </svg>
         </div>
       </div>
-      <div class="bg-blue-900 py-1 px-4 text-white cursor-pointer">#Departamento Uno</div>
+      <template v-if="privateChannels.length > 0">
+        <div class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-75 hover:bg-blue-900 channel-link" v-for="(channel, index) in privateChannels" :key="index">
+          {{ channel.channel_data[0].name }}
+        </div>
+      </template>
+      <template v-else>
+        <div class="py-1 px-4 text-white text-sm">
+          No estas en ningun canal privado
+        </div>
+      </template>
     </div>
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
-        <div class="opacity-75">Canales Publicos</div>
+        <div class="opacity-75 font-semibold">Canales Publicos</div>
         <div class="add-channel-btn" @click="openNewChannelDialog">
           <svg
             class="fill-current h-4 w-4 opacity-50"
@@ -50,7 +59,22 @@
           </svg>
         </div>
       </div>
-      <div class="bg-teal-dark py-1 px-4 text-white cursor-pointer">#Publico Uno</div>
+      <template v-if="publicChannels.length > 0">
+        <div 
+          class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-75 hover:bg-blue-900 channel-link"
+          :class="{ 'active-channel': inChannel && inChannel.channelId === channel.channelId }"
+          v-for="(channel, index) in publicChannels" 
+          :key="index"
+          @click="setSelectedChannel(channel)"
+        >
+          {{ channel.channel_data[0].name }}
+        </div>
+      </template>
+      <template v-else>
+        <div class="py-1 px-4 text-white text-sm">
+          No estas en ningun canal publico
+        </div>
+      </template>
     </div>
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
@@ -81,6 +105,10 @@ export default {
     user: {
       type: Object,
       required: true
+    },
+    channels: {
+      type: Array,
+      required: true
     }
   },
   methods: {
@@ -89,6 +117,20 @@ export default {
     },
     openNewChannelDialog() {
       this.$store.dispatch('dialogs/toggleNewChannelDialog', true);
+    },
+    setSelectedChannel(channel) {
+      this.$store.dispatch('channel/setSelectedChannel', channel);
+    }
+  },
+  computed: {
+    privateChannels() {
+      return this.channels.filter(channel => channel.channel_data[0].type === 'privado') || [];
+    },
+    publicChannels() {
+      return this.channels.filter(channel => channel.channel_data[0].type === 'publico') || [];
+    },
+    inChannel() {
+      return this.$store.state.channel.inChannel;
     }
   },
 }
@@ -104,5 +146,13 @@ export default {
 .add-channel-btn {
   cursor: pointer;
   padding: 0 10px;
+}
+.channel-link:hover {
+  opacity: 1;
+  transition-duration: .2s;
+}
+.active-channel {
+  opacity: 1;
+  background-color: #2a4365;
 }
 </style>
