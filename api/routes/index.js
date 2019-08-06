@@ -12,4 +12,10 @@ module.exports = function(app) {
   // Channel Routes
   app.route('/channel')
     .post(channel.new_channel);
+
+  app.route('/channel/:channelId')
+    .get(channel.get_channel_data);
+  
+  app.route('/channels/user/:memberId')
+    .get(channel.get_user_channels);
 }

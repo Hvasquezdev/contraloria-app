@@ -25,6 +25,37 @@ exports.new_channel = function(req, res) {
         });
       }
     });
-
   }
 };
+
+exports.get_user_channels = function(req, res) {
+  const { memberId } = req.params;
+
+  if (!memberId) {
+    res.status(400).send({ error: true, message: 'Please provide the memberId' });
+  } else {
+    Channel.getUserChannels(memberId, function(err, channel) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(channel);
+      }
+    });
+  }
+}
+
+exports.get_channel_data = function(req, res) {
+  const { channelId } = req.params;
+
+  if(!channelId) {
+    res.status(400).send({ error: true, message: 'Please provide the channelId' });
+  } else {
+    Channel.getChannelData(channelId, function(err, channel) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(channel);
+      }
+    });
+  }
+}

@@ -36,6 +36,20 @@ const actions = {
         commit('registerFailure', error);
         dispatch('alert/error', error, { root: true });
       });
+  },
+  getChannelsByUser({ commit }, userId) {
+    return channelService.getByUserId(userId)
+      .then((channels) => {
+        return channels;
+      },
+      (error) => console.log(error));
+  },
+  getChannelsDataByUser({ commit }, data) {
+    return channelService.getDataByUser(data)
+      .then((channelData) => {
+        return channelData;
+      },
+      (error) => console.log(error));
   }
 };
 

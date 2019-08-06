@@ -4,6 +4,8 @@ export const channelService = {
   register,
   getAll,
   getById,
+  getByUserId,
+  getDataByUser
 };
 
 function register(channel) {
@@ -25,6 +27,30 @@ function getAll() {
   return fetch(`/channel`, requestOptions).then(handleResponse);
 }
 
+function getByUserId(id) {
+  const requestOptions = {
+    method: 'GET',
+    headers: authHeader()
+  };
+
+  return fetch(`http://localhost:3001/channels/user/${id}`, requestOptions).then(handleResponse);
+}
+
+async function getDataByUser(data) {
+  const requestOptions = {
+    method: 'GET',
+    headers: authHeader()
+  };
+
+  let channel_list = data;
+  let result;
+  for(let i = 0; i < channel_list.length; i++){
+    result = await fetch(`http://localhost:3001/channel/${data[i].channelId}`, requestOptions).then(handleResponse);
+    channel_list[i]['channel_data'] = result;
+  }
+
+  return channel_list;
+}
 
 function getById(id) {
   const requestOptions = {

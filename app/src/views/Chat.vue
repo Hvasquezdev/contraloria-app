@@ -106,6 +106,13 @@ export default {
     });
   },
   name: 'chat-page',
+  mounted() {
+    this.$store.dispatch('channel/getChannelsByUser', 1)
+      .then(channels => {
+        this.$store.dispatch('channel/getChannelsDataByUser', channels)
+          .then((channel_list) => this.channel_list = channel_list);
+      });
+  },
   components: {
     ChatNavbar,
     ChatSidebar,
@@ -114,6 +121,7 @@ export default {
   data() {
     return {
       user: null,
+      channel_list: null,
     }
   },
   computed: {

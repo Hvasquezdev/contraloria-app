@@ -24,6 +24,26 @@ Channel.checkChannelName = function(channelName, result) {
     } else {
       result(null, res);
     }
+  });
+}
+
+Channel.getUserChannels = function(memberId, result) {
+  mysqlConnection.query("SELECT * FROM channel_member WHERE memberId = ?", [memberId], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+}
+
+Channel.getChannelData = function(channelId, result) {
+  mysqlConnection.query("SELECT * FROM channel WHERE id = ?", [channelId], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
   })
 }
 
