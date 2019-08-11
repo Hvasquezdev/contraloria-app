@@ -5,7 +5,9 @@ const state = {
     registering: false
   },
   userChannels: null,
-  inChannel: null
+  inChannel: null,
+  inChannelMembers: null,
+  loadingChannelMembers: false
 }
 
 const mutations = {
@@ -25,6 +27,12 @@ const mutations = {
   },
   setSelectedChannel(state, channel) {
     state.inChannel = channel;
+  },
+  setChannelMembers(state, channelMembers) {
+    state.inChannelMembers = channelMembers;
+  },
+  setLoadingChannelMembers(state, value) {
+    state.loadingChannelMembers = value;
   }
 };
 
@@ -60,7 +68,25 @@ const actions = {
       },
       (error) => console.log(error));
   },
-  setSelectedChannel({ commit }, channel) {
+  getChannelMembers({ dispatch } , channelId) {
+    return channelService.getChannelMembers(channelId)
+      .then((channelMembers) => {
+        dispatch('getChannelMembersData', channelMembers);
+      },
+      (error) => console.log(error));
+  },
+  getChannelMembersData({ commit }, data) {
+    return channelService.getChannelMembersData(data)
+      .then((memberData) => {
+        commit('setChannelMembers', memberData);
+        commit('setLoadingChannelMembers', false);
+        return memberData;
+      },
+      (error) => console.log(error));
+  },
+  setSelectedChannel({ commit, dispatch }, channel) {
+    commit('setLoadingChannelMembers', true);
+    dispatch('getChannelMembers', channel.channelId);
     commit('setSelectedChannel', channel);
   }
 };

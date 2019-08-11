@@ -91,12 +91,15 @@
         </div>
       </div>
     </div>
+
+    <channel-users-list></channel-users-list>
   </div>
 </template>
 
 <script>
 const ChatNavbar = () => import('@/components/chat/Navbar.vue');
 const ChatSidebar = () => import('@/components/chat/Sidebar.vue');
+const ChannelUsersList = () => import('@/components/chat/UserList.vue');
 const NewChannelDialog = () => import('@/components/base-components/BaseDialog.vue');
 
 export default {
@@ -119,6 +122,7 @@ export default {
   components: {
     ChatNavbar,
     ChatSidebar,
+    ChannelUsersList,
     NewChannelDialog
   },
   data() {
