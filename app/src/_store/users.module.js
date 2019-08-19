@@ -2,6 +2,7 @@ import { userService } from '../_services';
 
 const state = {
   all: {},
+  user: {}
 };
 
 const mutations = {
@@ -34,7 +35,19 @@ const mutations = {
 
       return user;
     });
-  }
+  },
+
+  getUserRequest(state, value) {
+    state.user = { getting: value }
+  },
+
+  getUserSuccess(state, user) {
+    state.user = { data: user };
+  },
+
+  getUserFailure(state, error) {
+    state.user = { error };
+  },
 };
 
 const actions = {
@@ -59,6 +72,21 @@ const actions = {
       },
       (error) => {
         commit('deleteFailure', { id, error: error.toString() });
+      });
+  },
+
+  getByUserName({ commit }, userName) {
+    commit('getUserRequest', true);
+    
+    return userService.getByUserName(userName)
+      .then((user) => {
+        commit('getUserSuccess', user);
+        commit('getUserRequest', false);
+        return user;
+      },
+      (error) => {
+        commit('getUserFailure', error);
+        commit('getUserRequest', false);
       });
   }
 };

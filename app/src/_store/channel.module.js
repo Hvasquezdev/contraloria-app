@@ -22,15 +22,19 @@ const mutations = {
   registerFailure(state) {
     state.status = { registering: false };
   },
+
   setUserChannels(state, channelData) {
     state.userChannels = channelData;
   },
+
   setSelectedChannel(state, channel) {
     state.inChannel = channel;
   },
+
   setChannelMembers(state, channelMembers) {
     state.inChannelMembers = channelMembers;
   },
+  
   setLoadingChannelMembers(state, value) {
     state.loadingChannelMembers = value;
   }

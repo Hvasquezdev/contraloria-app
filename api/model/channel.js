@@ -47,6 +47,26 @@ Channel.getChannelData = function(channelId, result) {
   })
 }
 
+Channel.getChannelMembers = function(channelId, result) {
+  mysqlConnection.query("SELECT * FROM channel_member WHERE channelId = ?", [channelId], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
+
+Channel.getMemberData = function(memberId, result) {
+  mysqlConnection.query("SELECT * FROM users WHERE id = ?", [memberId], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
+
 module.exports = {
   Channel
 };

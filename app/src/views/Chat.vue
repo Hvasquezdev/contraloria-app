@@ -6,6 +6,9 @@
     <!-- Dialog / New Channel Form -->
     <new-channel-dialog v-if="showNewChannelDialog"></new-channel-dialog>
 
+    <!-- Dialog / New Channel Member Form -->
+    <add-member-dialog v-if="showNewMemberDialog"></add-member-dialog>
+
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
       <!-- Top bar -->
@@ -100,7 +103,8 @@
 const ChatNavbar = () => import('@/components/chat/Navbar.vue');
 const ChatSidebar = () => import('@/components/chat/Sidebar.vue');
 const ChannelUsersList = () => import('@/components/chat/UserList.vue');
-const NewChannelDialog = () => import('@/components/base-components/BaseDialog.vue');
+const NewChannelDialog = () => import('@/components/dialogs/NewChannelDialog.vue');
+const AddMemberDialog = () => import('@/components/dialogs/AddMemberDialog.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -123,7 +127,8 @@ export default {
     ChatNavbar,
     ChatSidebar,
     ChannelUsersList,
-    NewChannelDialog
+    NewChannelDialog,
+    AddMemberDialog
   },
   data() {
     return {
@@ -134,6 +139,9 @@ export default {
   computed: {
     showNewChannelDialog() {
       return this.$store.state.dialogs.isOpen.newChannel
+    },
+    showNewMemberDialog() {
+      return this.$store.state.dialogs.isOpen.newChannelMember
     }
   },
 };

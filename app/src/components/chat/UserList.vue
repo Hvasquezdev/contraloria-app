@@ -25,19 +25,23 @@
         </div>
       </template>
       <div 
-        class="flex items-center py-1 px-4 mb-2 opacity-50 cursor-pointer" 
+        class="flex items-center py-1 px-4 mb-2 opacity-50 cursor-pointer justify-center" 
         v-if="loadingChannelMembers"
       >
-        <span>Cargando lista de usuarios</span>
+        <the-loader></the-loader>
       </div>
       <div 
-        class="flex items-center py-1 px-4 mb-2 opacity-50 cursor-pointer" 
+        class="flex items-center py-1 px-4 mb-2 opacity-50 cursor-pointer justify-center" 
         v-if="channelMembersCount <= 0 || !channelMembers && !loadingChannelMembers"
       >
         <span>Selecciona un canal</span>
       </div>
       <div class="flex button-add-member items-center pb-2 pt-4 px-4 mb-2 opacity-50 cursor-pointer">
-        <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-full">
+        <button 
+          class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-full"
+          :class="{ 'disabled-button': !inChannel }"
+          @click="openNewChannelMemberDialog"
+        >
           Agregar
         </button>
       </div>
@@ -46,9 +50,23 @@
 </template>
 
 <script>
+const TheLoader = () => import('@/components/TheLoader.vue');
+
 export default {
   name: 'chat-members-list',
+  components: {
+    TheLoader,
+  },
+  methods: {
+    openNewChannelMemberDialog() {
+      if(!this.inChannel) return;
+      this.$store.dispatch('dialogs/toggleNewChanneMemberlDialog', true);
+    },
+  },
   computed: {
+    inChannel() {
+      return this.$store.state.channel.inChannel;
+    },
     channelMembers() {
       return this.$store.state.channel.inChannelMembers;
     },
@@ -94,5 +112,9 @@ export default {
 }
 .button-add-member {
   border-top: 1px solid rgba(29,28,29,.13);
+}
+.disabled-button {
+  opacity: 0.65; 
+  cursor: not-allowed;
 }
 </style>

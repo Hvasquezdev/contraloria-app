@@ -6,6 +6,7 @@ export const userService = {
   register,
   getAll,
   getById,
+  getByUserName,
   update,
   delete: _delete
 };
@@ -61,6 +62,15 @@ function getById(id) {
   };
 
   return fetch(`/users/${id}`, requestOptions).then(handleResponse);
+}
+
+function getByUserName(userName) {
+  const requestOptions = {
+      method: 'GET',
+      headers: authHeader()
+  };
+
+  return fetch(`http://localhost:3001/user/${userName}`, requestOptions).then(handleResponse);
 }
 
 function update(user) {

@@ -92,6 +92,17 @@ User.getAll = function(result) {
   });
 };
 
+User.getByUserName = function(userName, result) {
+  mysqlConnection.query("SELECT id, name, lastName, userName FROM users WHERE userName = ?", [userName], function(err, res) {
+    if(err) {
+      console.log('error: ', err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
 Rol.newRol = function(data, result) {
   mysqlConnection.query("INSERT INTO rol set ?", [data], function(err, res) {
     if(err) {

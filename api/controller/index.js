@@ -74,3 +74,19 @@ exports.get_all_users = function(req, res) {
     }
   });
 };
+
+exports.get_by_username = function(req, res) {
+  const { userName } = req.params;
+
+  if (!userName) {
+    res.status(400).send({ error: true, message: 'Please provide the username' });
+  } else {
+    User.getByUserName(userName, function(err, user) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(user);
+      }
+    });
+  }
+}
