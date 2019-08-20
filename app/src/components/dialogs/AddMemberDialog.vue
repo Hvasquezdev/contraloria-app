@@ -18,7 +18,7 @@
           placeholder="Nombre de usuario"
           v-model.trim="userName"
           @keyup.enter="searchUser"
-          :disabled="searchingUser"
+          :disabled="searchingUser || userAdded"
         >
       </div>
     </div>
@@ -30,9 +30,9 @@
       </div>
     </div>
 
-    <div class="w-full mb-4 mt-6" v-if="foundUserData && !searchingUser">
-      <div class="flex items-center uppercase text-gray-700 found-user__text font-normal">
-        Localizado: 
+    <div class="w-full mb-4 mt-6" v-if="foundUserData && !searchingUser && !memberInChannel && !userAdded">
+      <div class="flex items-center capitalize text-gray-700 found-user__text font-normal">
+        Usuario: 
         <strong class="font-bold mr-2 ml-1 capitalize">
           <small>({{ searchedUsername }}): </small>
           {{ foundUserData.name }} {{ foundUserData.lastName }}
@@ -41,10 +41,24 @@
       </div>
     </div>
 
-    <div class="w-full mb-4 mt-6" v-if="!foundUserData && !searchingUser && searchedUsername">
-      <div class="flex items-center uppercase text-gray-700 found-user__text font-normal">
-        No localizado: <strong class="font-bold mr-2 ml-1 capitalize">{{ searchedUsername }}</strong> 
+    <div class="w-full mb-4 mt-6" v-if="!foundUserData && !searchingUser && searchedUsername && !memberInChannel && !userAdded">
+      <div class="flex items-center capitalize text-gray-700 found-user__text font-normal">
+        No se encontró: <strong class="font-bold mr-2 ml-1 capitalize">{{ searchedUsername }}</strong> 
         <cross-icon></cross-icon>
+      </div>
+    </div>
+
+    <div class="w-full mb-4 mt-6" v-if="memberInChannel && !userAdded">
+      <div class="flex items-center text-gray-700 found-user__text font-normal">
+        Ya pertenece al canal: <strong class="font-bold mr-2 ml-1 capitalize">{{ searchedUsername }}</strong> 
+        <cross-icon></cross-icon>
+      </div>
+    </div>
+
+    <div class="w-full mb-4 mt-6" v-if="userAdded">
+      <div class="flex items-center text-gray-700 found-user__text font-normal">
+        Usuario agregado: <strong class="font-bold mr-2 ml-1 capitalize">{{ searchedUsername }}</strong> 
+        <check-icon></check-icon>
       </div>
     </div>
 
@@ -52,20 +66,24 @@
     <div class="flex justify-end pt-2" :class="{ 'mt-4': !searchingUser && !foundUserData }">
       <button 
         class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2"
-        :class="{ 'disabled-button': searchingUser }"
+        :class="{ 'disabled-button': searchingUser || userAdded }"
         @click="closeDialog" 
       >
         Cancelar
       </button>
       <button 
         class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" 
-        :class="{ 'mr-2': foundUserData && !searchingUser, 'disabled-button': searchingUser }"
+        :class="{ 'mr-2': foundUserData && !searchingUser, 'disabled-button': searchingUser || userAdded }"
         @click="searchUser" 
       >
         <span v-if="searchedUsername && !searchingUser">Buscar de nuevo</span>
         <span v-else>Buscar</span>
       </button>
-      <button class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" v-if="foundUserData && !searchingUser">
+      <button 
+        class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" 
+        v-if="foundUserData && !searchingUser && !memberInChannel && !userAdded"
+        @click="handleSubmit"
+      >
         Agregar
       </button>
     </div>
@@ -93,20 +111,25 @@ export default {
       errors: null,
       foundUserData: null,
       searchedUsername: null,
+      memberInChannel: false,
+      userAdded: false,
     }
   },
   methods: {
     ...mapActions('users', ['getByUserName']),
+    ...mapActions('channel', ['addMember']),
     closeDialog() {
       this.$store.dispatch('dialogs/toggleNewChanneMemberlDialog', false)
     },
     searchUser() {
+      if(this.searchingUser || this.userAdded) return;
       const userName = this.userName.toLowerCase();
       this.searchedUsername = null;
 
       if(userName) {
         this.errors = null;
         this.foundUserData = null;
+        this.memberInChannel = false;
 
         this.getByUserName(userName)
           .then((user) => {
@@ -117,12 +140,40 @@ export default {
       } else {
         this.errors = 'Por favor ingrese un nombre de usuario'
       }
+    },
+    handleSubmit() {
+      if(this.searchingUser || this.userAdded) return;
+      const memberId = this.foundUserData.id;
+      const channelId = this.inChannel.channelId;
+
+      this.addMember({ memberId, channelId })
+        .then((response) => {
+          if(response && response.ok) {
+            this.memberInChannel = false;
+            this.userAdded = true;
+            this.reloadChannelMemberList();
+            setTimeout(() => {
+              this.closeDialog();
+            }, 1000);
+          }
+        })
+        .catch((error) => {
+          console.log('Error:', error);
+          this.memberInChannel = true;
+        });
+    },
+    reloadChannelMemberList() {
+      const channel = this.inChannel;
+      this.$store.dispatch('channel/setSelectedChannel', channel);
     }
   },
   computed: {
     searchingUser() {
       return this.$store.state.users.user.getting || false;
-    }
+    },
+    inChannel() {
+      return this.$store.state.channel.inChannel;
+    },
   },
 }
 </script>

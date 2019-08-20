@@ -2,7 +2,8 @@ import { channelService } from '../_services';
 
 const state = {
   status: {
-    registering: false
+    registering: false,
+    addingMember: false
   },
   userChannels: null,
   inChannel: null,
@@ -37,6 +38,19 @@ const mutations = {
   
   setLoadingChannelMembers(state, value) {
     state.loadingChannelMembers = value;
+  },
+
+  AddMemberRequest(state) {
+    state.status = { addingMember: true };
+  },
+
+  addMemberRequestSuccess(state) {
+    state.status = { addingMember: false };
+  },
+
+  addMemberRequestFailure(state, error) {
+    state.status = { addingMember: false };
+    console.log(error);
   }
 };
 
@@ -77,7 +91,7 @@ const actions = {
       .then((channelMembers) => {
         dispatch('getChannelMembersData', channelMembers);
       },
-      (error) => console.log(error));
+      (error) => { throw error; });
   },
   getChannelMembersData({ commit }, data) {
     return channelService.getChannelMembersData(data)
@@ -86,12 +100,29 @@ const actions = {
         commit('setLoadingChannelMembers', false);
         return memberData;
       },
-      (error) => console.log(error));
+      (error) => { throw error; });
   },
   setSelectedChannel({ commit, dispatch }, channel) {
     commit('setLoadingChannelMembers', true);
     dispatch('getChannelMembers', channel.channelId);
     commit('setSelectedChannel', channel);
+  },
+  addMember({ commit, dispatch }, data) {
+    commit('addMemberRequest');
+
+    return channelService.addMember(data)
+      .then((result) => {
+        dispatch('alert/success', 'Registration successful', { root: true });
+        commit('addMemberRequestSuccess');
+        return {
+          ok: true,
+          result,
+        };
+      },
+      (error) => {
+        commit('addMemberRequestFailure', error);
+        throw error;
+      });
   }
 };
 

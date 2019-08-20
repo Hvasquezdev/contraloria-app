@@ -7,7 +7,8 @@ export const channelService = {
   getByUserId,
   getDataByUser,
   getChannelMembers,
-  getChannelMembersData
+  getChannelMembersData,
+  addMember
 };
 
 function register(channel) {
@@ -85,6 +86,16 @@ async function getChannelMembersData(data) {
   }
 
   return members_list;
+}
+
+function addMember(data) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  };
+
+  return fetch('http://localhost:3001/channel/member/new', requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

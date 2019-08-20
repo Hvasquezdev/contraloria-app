@@ -91,3 +91,31 @@ exports.get_channel_members_data = function(req, res) {
     });
   }
 }
+
+exports.new_channel_member = function(req, res) {
+  const { memberId, channelId } = req.body;
+  console.log('Controller adding member to channel');
+
+  if(!memberId || !channelId) {
+    res.status(400).send({ error: true, message: 'Please provide the member and channel id' });
+  } else {
+
+    // Checking if the user isn't in the channel
+    Channel.checkUserInChannel({ memberId, channelId }, function(err, response) {
+      if(err) {
+        res.send(err);
+      } else {
+        if(response.length >= 1) return res.status(400).send({ error: true, message: 'The user is already in the channel', status: 400 });
+        
+        // If user is not in the channel
+        Channel.newMember({ memberId, channelId }, function(err, response) {
+          if(err) {
+            res.send(err);
+          } else {
+            res.status(200).send({ error: false, message: 'Member added correctly', response, status: 200 });
+          }
+        });
+      }
+    });
+  }
+};

@@ -67,6 +67,29 @@ Channel.getMemberData = function(memberId, result) {
   })
 }
 
+Channel.checkUserInChannel = function(data, result) {
+  const { memberId, channelId } = data;
+
+  mysqlConnection.query("SELECT id FROM channel_member WHERE memberId = ? AND channelId = ?", [memberId, channelId], function(err, res) {
+    if(err) {
+      console.log(err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+}
+
+Channel.newMember = function(data, result) {
+  mysqlConnection.query("INSERT INTO channel_member set ?", data, function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
+
 module.exports = {
   Channel
 };
