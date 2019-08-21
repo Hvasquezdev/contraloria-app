@@ -1,6 +1,7 @@
 module.exports = function(app) {
   const users = require('../controller');
   const channel = require('../controller/channel');
+  const message = require('../controller/message');
 
   app.route('/users')
     .get(users.get_all_users)
@@ -30,4 +31,11 @@ module.exports = function(app) {
   
   app.route('/channels/user/:memberId')
     .get(channel.get_user_channels);
+
+  // Messages Routes
+  app.route('/messages/:channelId')
+    .get(message.get_all_by_channel);
+
+  app.route('/message/:messageId/text')
+    .get(message.get_channel_message_text);
 }
