@@ -6,6 +6,7 @@ import { account } from './account.module';
 import { users } from './users.module';
 import { dialogs } from './dialogs.module';
 import { channel } from './channel.module';
+import { message } from './message.module';
 
 Vue.use(Vuex);
 
@@ -15,7 +16,8 @@ const store = new Vuex.Store({
     account,
     users,
     dialogs,
-    channel
+    channel,
+    message
   }
 });
 

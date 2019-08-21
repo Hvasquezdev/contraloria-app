@@ -120,6 +120,18 @@ export default {
     },
     setSelectedChannel(channel) {
       this.$store.dispatch('channel/setSelectedChannel', channel);
+      this.getChannelMessages(channel.channelId);
+    },
+    getChannelMessages(channelId) {
+      this.channelMessage = [];
+      this.$store.dispatch('message/getMessagesByChannel', channelId)
+        .then(messages => {
+          this.$store.dispatch('message/getChannelMessageTextContent', messages)
+            .then((messagesData) => {
+              this.$emit('setChannelMessages', messagesData);
+            })
+            .catch((error) => console.log(error));
+        });
     }
   },
   computed: {

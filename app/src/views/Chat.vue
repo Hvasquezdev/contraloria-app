@@ -1,7 +1,12 @@
 <template>
   <div class="font-sans antialiased h-screen flex" v-if="user">
     <!-- Sidebar / channel list -->
-    <chat-sidebar :user="user" :channels="channel_list" v-if="channel_list && user"></chat-sidebar>
+    <chat-sidebar 
+      :user="user" 
+      :channels="channel_list" 
+      @setChannelMessages="setChannelMessages"
+      v-if="channel_list && user"
+    ></chat-sidebar>
 
     <!-- Dialog / New Channel Form -->
     <new-channel-dialog v-if="showNewChannelDialog"></new-channel-dialog>
@@ -11,72 +16,26 @@
 
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
+
       <!-- Top bar -->
       <chat-navbar></chat-navbar>
+
       <!-- Chat messages -->
       <div class="px-6 py-4 flex-1 overflow-y-scroll">
+
         <!-- A message -->
-        <div class="flex items-start mb-2 text-sm pb-2 message-container">
-          <img
-            src="https://colewest.com/wp-content/uploads/2016/12/user-placeholder.jpg"
-            class="w-10 h-10 rounded mr-3"
-          />
-          <div class="flex-1 overflow-hidden">
-            <div class="flex justify-between">
-              <span class="font-bold">
-                Hector Vasquez
-                <span class="font-normal">
-                  (hector398)
-                </span>  
-              </span>
-              <span class="text-grey text-xs">11:46</span>
-            </div>
-            <p class="text-black leading-normal">mensaje de prueba asdasdas</p>
-          </div>
-        </div>
-        <!-- A message -->
-        <div class="flex items-start mb-2 text-sm pb-2 message-container">
-          <img
-            src="https://colewest.com/wp-content/uploads/2016/12/user-placeholder.jpg"
-            class="w-10 h-10 rounded mr-3"
-          />
-          <div class="flex-1 overflow-hidden">
-            <div class="flex justify-between">
-              <span class="font-bold">
-                Hector Vasquez
-                <span class="font-normal">
-                  (hector398)
-                </span>  
-              </span>
-              <span class="text-grey text-xs">12:45</span>
-            </div>
-            <p
-              class="text-black leading-normal"
-            >Prueba prueba prueba</p>
-          </div>
-        </div>
-        <!-- A message -->
-        <div class="flex items-start mb-2 text-sm pb-2 message-container">
-          <img
-            src="https://colewest.com/wp-content/uploads/2016/12/user-placeholder.jpg"
-            class="w-10 h-10 rounded mr-3"
-          />
-          <div class="flex-1 overflow-hidden">
-            <div class="flex justify-between">
-              <span class="font-bold">
-                Ronaldo Cardenas
-                <span class="font-normal">
-                  (ronaldo2019)
-                </span> 
-              </span>
-              <span class="text-grey text-xs">15:23</span>
-            </div>
-            <p class="text-black leading-normal">
-              <a href="#" class="inline-block bg-blue-lightest text-blue no-underline"><strong>Hector398</strong></a> Probando mención de usuario
-            </p>
-          </div>
-        </div>
+        <template v-if="channel_messages.length > 0">
+          <message-component
+            v-for="(message, index) in channel_messages" :key="index"
+            fullName="Ronaldo Cardenas"
+            userName="ronaldo2019"
+            :messageText="message.message_text[0].content"
+            :messageDate="message.message_text[0].date_message"
+          ></message-component>
+        </template>
+
       </div>
+
       <div class="pb-6 px-6 flex-none">
         <div class="flex rounded-lg border-2 border-gray-600 overflow-hidden">
           <span class="text-3xl text-green-900 border-r-2 border-gray-600 p-2 cursor-pointer">
@@ -105,6 +64,7 @@ const ChatSidebar = () => import('@/components/chat/Sidebar.vue');
 const ChannelUsersList = () => import('@/components/chat/UserList.vue');
 const NewChannelDialog = () => import('@/components/dialogs/NewChannelDialog.vue');
 const AddMemberDialog = () => import('@/components/dialogs/AddMemberDialog.vue');
+const MessageComponent = () => import('@/components/chat/Message.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -128,12 +88,19 @@ export default {
     ChatSidebar,
     ChannelUsersList,
     NewChannelDialog,
-    AddMemberDialog
+    AddMemberDialog,
+    MessageComponent
   },
   data() {
     return {
       user: null,
       channel_list: null,
+      channel_messages: [],
+    }
+  },
+  methods: {
+    setChannelMessages(messages) {
+      this.channel_messages = messages;
     }
   },
   computed: {
