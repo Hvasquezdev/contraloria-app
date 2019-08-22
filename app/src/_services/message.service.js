@@ -2,7 +2,8 @@ import { authHeader } from '../_helpers';
 
 export const messageService = {
   getAllByChannel,
-  getChannelMessageText
+  getChannelMessageText,
+  sendMessageToChannel
 };
 
 function getAllByChannel(channelId) {
@@ -45,4 +46,14 @@ function handleResponse(response) {
 
     return data;
   });
+}
+
+function sendMessageToChannel(message) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(message),
+  };
+
+  return fetch('http://localhost:3001/message', requestOptions).then(handleResponse);
 }

@@ -29,8 +29,8 @@
             v-for="(message, index) in channel_messages" :key="index"
             fullName="Ronaldo Cardenas"
             userName="ronaldo2019"
-            :messageText="message.message_text[0].content"
-            :messageDate="message.message_text[0].date_message"
+            :messageText="message.message_text[0].content || message.text.content"
+            :messageDate="message.message_text[0].date_message || new Date().toLocaleString()"
           ></message-component>
         </template>
 
@@ -49,7 +49,7 @@
               />
             </svg>
           </span>
-          <input type="text" class="w-full px-4 text-gray-900" placeholder="Escribe tu mensaje" />
+          <input type="text" class="w-full px-4 text-gray-900" placeholder="Escribe tu mensaje" v-model="messageText" @keyup.enter="sendMessage" />
         </div>
       </div>
     </div>
@@ -82,6 +82,24 @@ export default {
             this.channel_list = channels;
           });
       });
+    this.$socket.on('sentMessageToChannel', (message) => {
+      if(message.destinationId === this.inChannel.channelId) {
+        const messageData = {
+          userId: message.userId,
+          destinationId: message.destinationId,
+          hasMedia: message.hasMedia,
+          hasText: message.hasText,
+          message_text: [
+            {
+              channel_message_id: message.text.channel_message_id,
+              content: message.text.content
+            }
+          ]
+        };
+
+        this.channel_messages.push(messageData);
+      }
+    })
   },
   components: {
     ChatNavbar,
@@ -96,11 +114,31 @@ export default {
       user: null,
       channel_list: null,
       channel_messages: [],
+      messageText: null,
     }
   },
   methods: {
     setChannelMessages(messages) {
       this.channel_messages = messages;
+    },
+    sendMessage() {
+      if(!this.inChannel) return;
+
+      const message = {
+        userId: this.user.data.id,
+        destinationId: this.inChannel.channelId,
+        hasMedia: 0,
+        hasText: 1,
+        media: {},
+        text: {
+          content: this.messageText,
+        }
+      };
+
+      this.$store.dispatch('message/sendMessageToChannel', message)
+        .then(() => {
+          this.messageText = null;
+        });
     }
   },
   computed: {
@@ -109,6 +147,9 @@ export default {
     },
     showNewMemberDialog() {
       return this.$store.state.dialogs.isOpen.newChannelMember
+    },
+    inChannel() {
+      return this.$store.state.channel.inChannel;
     }
   },
 };

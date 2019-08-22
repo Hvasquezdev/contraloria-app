@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function(app, io) {
   const users = require('../controller');
   const channel = require('../controller/channel');
   const message = require('../controller/message');
@@ -38,4 +38,9 @@ module.exports = function(app) {
 
   app.route('/message/:messageId/text')
     .get(message.get_channel_message_text);
+
+  app.route('/message')
+    .post(function(req, res) {
+      return message.send_message_to_channel(req, res, io);
+    });
 }

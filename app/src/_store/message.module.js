@@ -3,12 +3,25 @@ import { messageService } from '../_services';
 const state = {
   status: {
     fetchingMessages: false,
-    fetchingMessageText: false
+    fetchingMessageText: false,
+    sendingMessage: false,
   },
   channelMessages: [],
 }
 
 const mutations = {
+  sendMessageRequest(state) {
+    state.status = { sendingMessage: true };
+  },
+
+  sendMessageSuccess(state) {
+    state.status = { sendingMessage: false };
+  },
+
+  sendMessageFailure(state) {
+    state.status = { sendingMessage: false };
+  },
+
   getMessagesRequest(state) {
     state.status = { fetchingMessages: true };
   },
@@ -35,6 +48,10 @@ const mutations = {
 
   setChannelMessageTextContent(state, channelMessages) {
     state.channelMessage = channelMessages;
+  },
+
+  addMessageToArray(state, message) {
+    state.channelMessages.push(message);
   }
 };
 
@@ -64,6 +81,20 @@ const actions = { // TODO: get message author data, check if the message has med
       },
       (error) => {
         commit('getMessagesTextFailure');
+        throw error;
+      });
+  },
+
+  sendMessageToChannel({ commit }, message) {
+    commit('sendMessageRequest');
+
+    return messageService.sendMessageToChannel(message)
+      .then((response) => {
+        commit('sendMessageSuccess');
+        return response;
+      },
+      (error) => {
+        commit('sendMessageFailure');
         throw error;
       });
   },

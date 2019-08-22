@@ -31,3 +31,22 @@ exports.get_channel_message_text = function(req, res) {
     });
   }
 }
+
+exports.send_message_to_channel = function(req, res, io) {
+  const newMessage = req.body;
+  console.log('Controller sending message');
+
+  if(!newMessage.userId || !newMessage.destinationId) {
+    res.status(400).send({ error: true, message: 'Please provide the complete message data' });
+  } else {
+
+    Message.sendMessageToChannel(newMessage, function(err, message) {
+      if(err) {
+        res.send(err);
+      } else {
+        io.sockets.emit('sentMessageToChannel', newMessage);
+        res.status(200).send({ error: false, message: 'Message sent correctly', message });
+      }
+    });
+  }
+};
