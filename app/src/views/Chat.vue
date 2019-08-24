@@ -27,10 +27,10 @@
         <template v-if="channel_messages.length > 0">
           <message-component
             v-for="(message, index) in channel_messages" :key="index"
-            fullName="Ronaldo Cardenas"
-            userName="ronaldo2019"
-            :messageText="message.message_text[0].content || message.text.content"
-            :messageDate="message.message_text[0].date_message || new Date().toLocaleString()"
+            :fullName="`${message.name} ${message.lastName}`"
+            :userName="message.userName"
+            :messageText="message.content"
+            :messageDate="message.date_message"
           ></message-component>
         </template>
 
@@ -84,17 +84,13 @@ export default {
       });
     this.$socket.on('sentMessageToChannel', (message) => {
       if(message.destinationId === this.inChannel.channelId) {
+        const user = this.user;
         const messageData = {
-          userId: message.userId,
-          destinationId: message.destinationId,
-          hasMedia: message.hasMedia,
-          hasText: message.hasText,
-          message_text: [
-            {
-              channel_message_id: message.text.channel_message_id,
-              content: message.text.content
-            }
-          ]
+          name: user.data.name,
+          lastName: user.data.lastName,
+          userName: user.data.userName,
+          content: message.text.content,
+          date_message: new Date().toLocaleDateString()
         };
 
         this.channel_messages.push(messageData);

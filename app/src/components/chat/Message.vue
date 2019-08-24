@@ -6,13 +6,13 @@
     />
     <div class="flex-1 overflow-hidden">
       <div class="flex justify-between">
-        <span class="font-bold">
+        <span class="font-bold capitalize">
           {{ fullName }}
           <span class="font-normal">
             ({{ userName }})
           </span>  
         </span>
-        <span class="text-grey text-xs">{{ messageDate }}</span>
+        <span class="text-grey text-xs">{{ messageDate | messageDate }}</span>
       </div>
       <p
         class="text-black leading-normal"
@@ -47,6 +47,13 @@ export default {
     messageDate: {
       type: String,
       required: true
+    }
+  },
+  filters: {
+    messageDate: function (value) {
+      if (!value) return '';
+      value = Date.parse(value);
+      return new Date(value).toLocaleDateString();
     }
   }
 }

@@ -70,21 +70,6 @@ const actions = { // TODO: get message author data, check if the message has med
       });
   },
 
-  getChannelMessageTextContent({ commit }, messages) {
-    commit('getMessagesTextRequest');
-
-    return messageService.getChannelMessageText(messages)
-      .then((messageTextContent) => {
-        commit('getMessagesTextSuccess');
-        commit('setChannelMessageTextContent', messageTextContent);
-        return messageTextContent;
-      },
-      (error) => {
-        commit('getMessagesTextFailure');
-        throw error;
-      });
-  },
-
   sendMessageToChannel({ commit }, message) {
     commit('sendMessageRequest');
 

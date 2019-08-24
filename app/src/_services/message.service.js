@@ -2,7 +2,6 @@ import { authHeader } from '../_helpers';
 
 export const messageService = {
   getAllByChannel,
-  getChannelMessageText,
   sendMessageToChannel
 };
 
@@ -13,21 +12,6 @@ function getAllByChannel(channelId) {
   };
 
   return fetch(`http://localhost:3001/messages/${channelId}`, requestOptions).then(handleResponse);
-}
-
-async function getChannelMessageText(messages) {
-  const requestOptions = {
-    method: 'GET',
-    headers: authHeader()
-  };
-
-  let messages_list = messages;
-  let result;
-  for(let i = 0; i < messages_list.length; i++){
-    result = await fetch(`http://localhost:3001/message/${messages[i].id}/text`, requestOptions).then(handleResponse);
-    messages_list[i]['message_text'] = result;
-  }
-  return messages_list;
 }
 
 function handleResponse(response) {

@@ -16,22 +16,6 @@ exports.get_all_by_channel = function(req, res) {
   }
 }
 
-exports.get_channel_message_text = function(req, res) {
-  const { messageId } = req.params;
-
-  if (!messageId) {
-    res.status(400).send({ error: true, message: 'Please provide the channel id' });
-  } else {
-    Message.getMessageTextByChannel(messageId, function(err, messageTextContent) {
-      if(err) {
-        res.send(err);
-      } else {
-        res.json(messageTextContent);
-      }
-    });
-  }
-}
-
 exports.send_message_to_channel = function(req, res, io) {
   const newMessage = req.body;
   console.log('Controller sending message');
