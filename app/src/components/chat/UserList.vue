@@ -57,6 +57,34 @@ export default {
   components: {
     TheLoader,
   },
+  mounted() {
+    this.$socket.on('addedMemberToChannel', (member) => {
+      if(member.channelId === this.inChannel.channelId) {
+        const memberData = {
+          memberId: member.memberId,
+          member_data: [
+            {
+              name: member.member_data.name,
+              lastName: member.member_data.lastName,
+              userName: member.member_data.userName,
+            }
+          ]
+        };
+
+        this.channelMembers.push(memberData);
+      }
+    });
+  },
+  data() {
+    return {
+      channelMembers: null,
+    }
+  },
+  watch: {
+    'channelMembersList': function(value) {
+      this.channelMembers = value;
+    }
+  },
   methods: {
     openNewChannelMemberDialog() {
       if(!this.inChannel) return;
@@ -67,7 +95,7 @@ export default {
     inChannel() {
       return this.$store.state.channel.inChannel;
     },
-    channelMembers() {
+    channelMembersList() {
       return this.$store.state.channel.inChannelMembers;
     },
     channelMembersCount() {

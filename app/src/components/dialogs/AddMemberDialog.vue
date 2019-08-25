@@ -146,12 +146,11 @@ export default {
       const memberId = this.foundUserData.id;
       const channelId = this.inChannel.channelId;
 
-      this.addMember({ memberId, channelId })
+      this.addMember({ memberId, channelId, member_data: this.foundUserData })
         .then((response) => {
           if(response && response.ok) {
             this.memberInChannel = false;
             this.userAdded = true;
-            this.reloadChannelMemberList();
             setTimeout(() => {
               this.closeDialog();
             }, 1000);

@@ -18,7 +18,9 @@ module.exports = function(app, io) {
     .post(channel.new_channel);
 
   app.route('/channel/member/new')
-    .post(channel.new_channel_member);
+    .post(function(req, res) {
+      return channel.new_channel_member(req, res, io);
+    });
 
   app.route('/channel/:channelId')
     .get(channel.get_channel_data);
