@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-900 text-purple-lighter flex-none w-64 pb-6 hidden md:block">
+  <div class="sidebar-container text-purple-lighter flex-none w-64 pb-6 hidden md:block">
     <div class="text-white mb-4 px-4 pb-4 flex justify-between user-data__container">
       <div class="flex-auto">
         <h1 class="font-semibold text-xl leading-tight mb-1 truncate capitalize">{{ user.data.name }} {{ user.data.lastName }}</h1>
@@ -61,7 +61,7 @@
       </div>
       <template v-if="publicChannels.length > 0">
         <div 
-          class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-75 hover:bg-blue-900 channel-link"
+          class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-75 channel-link capitalize"
           :class="{ 'active-channel': inChannel && inChannel.channelId === channel.channelId }"
           v-for="(channel, index) in publicChannels" 
           :key="index"
@@ -148,6 +148,9 @@ export default {
 </script>
 
 <style>
+.sidebar-container {
+  background-color: #073042;
+}
 .user-data__container {
   background: hsl(0, 0%, 14%);
   margin-top: 0;
@@ -158,12 +161,17 @@ export default {
   cursor: pointer;
   padding: 0 10px;
 }
+.channel-link {
+  transition: all .2s;
+}
 .channel-link:hover {
   opacity: 1;
-  transition-duration: .2s;
+  background: #3ddc84;
+  font-weight: 600;
 }
 .active-channel {
   opacity: 1;
-  background-color: #2a4365;
+  background: #3ddc84;
+  font-weight: 600;
 }
 </style>

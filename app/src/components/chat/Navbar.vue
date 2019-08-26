@@ -1,8 +1,8 @@
 <template>
   <div class="border-b flex px-6 py-2 items-center flex-none">
     <div class="flex flex-col">
-      <h3 class="text-grey-darkest mb-1 font-extrabold capitalize" v-if="inChannel">#{{ inChannel.channel_data[0].name }}</h3>
-      <h3 class="text-grey-darkest mb-1 font-extrabold" v-else>#Selecciona un canal</h3>
+      <h3 class="mb-1 font-extrabold capitalize font-dark-blue" v-if="inChannel">#{{ inChannel.channel_data[0].name }}</h3>
+      <h3 class="mb-1 font-extrabold font-dark-blue" v-else>#Selecciona un canal</h3>
       <transition name="fade">
         <div
           class="text-sm truncate user-added-text"

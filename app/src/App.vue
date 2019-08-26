@@ -40,4 +40,7 @@ export default {
   width: 100%;
   height: 100vh;
 }
+.font-dark-blue {
+  color: #073042;
+}
 </style>

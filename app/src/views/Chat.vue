@@ -37,8 +37,8 @@
       </div>
 
       <div class="pb-6 px-6 flex-none">
-        <div class="flex rounded-lg border-2 border-gray-600 overflow-hidden">
-          <span class="text-3xl text-green-900 border-r-2 border-gray-600 p-2 cursor-pointer">
+        <div class="flex rounded-lg border-1 border-dark-blue overflow-hidden">
+          <span class="text-3xl text-green-900 border-r-1 border-dark-blue p-2 cursor-pointer">
             <svg
               class="fill-current h-6 w-6 block"
               xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@
               />
             </svg>
           </span>
-          <input type="text" class="w-full px-4 text-gray-900" placeholder="Escribe tu mensaje" v-model="messageText" @keyup.enter="sendMessage" />
+          <input type="text" class="w-full px-4 font-dark-blue" placeholder="Escribe tu mensaje" v-model="messageText" @keyup.enter="sendMessage" />
         </div>
       </div>
     </div>
@@ -74,7 +74,8 @@ export default {
   },
   name: 'chat-page',
   mounted() {
-    this.$store.dispatch('channel/getChannelsByUser', 1)
+    const user = JSON.parse(localStorage.getItem('user'));
+    this.$store.dispatch('channel/getChannelsByUser', user.data.id)
       .then(channels => {
         this.$store.dispatch('channel/getChannelsDataByUser', channels)
           .then(() => {
@@ -154,5 +155,14 @@ export default {
 <style>
 .message-container {
   border-bottom: 1px solid #3636362b;
+}
+.border-dark-blue {
+  border-color: #073042;
+}
+.border-1 {
+  border-width: 1px;
+}
+.border-r-1 {
+  border-right-width: 1px;
 }
 </style>

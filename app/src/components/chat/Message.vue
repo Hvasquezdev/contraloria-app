@@ -6,7 +6,7 @@
     />
     <div class="flex-1 overflow-hidden">
       <div class="flex justify-between">
-        <span class="font-bold capitalize">
+        <span class="font-bold capitalize font-dark-blue">
           {{ fullName }}
           <span class="font-normal">
             ({{ userName }})
@@ -58,7 +58,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-  
-</style>
