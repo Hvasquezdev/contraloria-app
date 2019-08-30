@@ -120,3 +120,19 @@ exports.new_channel_member = function(req, res, io) {
     });
   }
 };
+
+exports.get_by_name = function(req, res) {
+  const { channelName } = req.params;
+
+  if (!channelName) {
+    res.status(400).send({ error: true, message: 'Please provide the channel name' });
+  } else {
+    Channel.getByName(channelName, function(err, user) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(user);
+      }
+    });
+  }
+}

@@ -90,6 +90,17 @@ Channel.newMember = function(data, result) {
   })
 }
 
+Channel.getByName = function(channelName, result) {
+  mysqlConnection.query("SELECT id, name, type FROM channel WHERE name = ?", [channelName], function(err, res) {
+    if(err) {
+      console.log('error: ', err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
 module.exports = {
   Channel
 };

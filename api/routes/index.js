@@ -34,6 +34,9 @@ module.exports = function(app, io) {
   app.route('/channels/user/:memberId')
     .get(channel.get_user_channels);
 
+  app.route('/channel/:channelName/search')
+    .get(channel.get_by_name);
+
   // Messages Routes
   app.route('/messages/:channelId')
     .get(message.get_all_by_channel);
