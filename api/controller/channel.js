@@ -113,6 +113,7 @@ exports.new_channel_member = function(req, res, io) {
             res.send(err);
           } else {
             io.sockets.emit('addedMemberToChannel', req.body);
+            io.sockets.emit('reloadSidebar', req.body);
             res.status(200).send({ error: false, message: 'Member added correctly', response, status: 200 });
           }
         });

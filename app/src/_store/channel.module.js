@@ -3,12 +3,15 @@ import { channelService } from '../_services';
 const state = {
   status: {
     registering: false,
-    addingMember: false
+    addingMember: false,
+    searchingChannel: false
   },
   userChannels: null,
   inChannel: null,
   inChannelMembers: null,
-  loadingChannelMembers: false
+  loadingChannelMembers: false,
+  channelFound: [],
+  searchedChannel: null,
 }
 
 const mutations = {
@@ -51,7 +54,21 @@ const mutations = {
   addMemberRequestFailure(state, error) {
     state.status = { addingMember: false };
     console.log(error);
-  }
+  },
+
+  searchChannelRequest(state, channelName) {
+    state.status = { searchingChannel: true };
+    state.searchedChannel = channelName;
+  },
+
+  searchChannelSuccess(state, channel) {
+    state.status = { searchingChannel: false };
+    state.channelFound = channel;
+  },
+
+  searchChannelFailure(state) {
+    state.status = { searchingChannel: false };
+  },
 };
 
 const actions = {
@@ -121,6 +138,19 @@ const actions = {
       },
       (error) => {
         commit('addMemberRequestFailure', error);
+        throw error;
+      });
+  },
+  searchChannelByName({ commit }, channelName) {
+    commit('searchChannelRequest', channelName);
+
+    return channelService.searchByName(channelName)
+      .then((response) => {
+        commit('searchChannelSuccess', response);
+        return response;
+      },
+      (error) => {
+        commit('searchChannelFailure');
         throw error;
       });
   }

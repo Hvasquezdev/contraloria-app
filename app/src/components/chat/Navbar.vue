@@ -16,8 +16,10 @@
       <div class="relative flex items-center">
         <input
           type="search"
-          placeholder="Buscar"
+          placeholder="Buscar canal"
           class="appearance-none border border-grey rounded-lg pl-8 pr-4 py-2"
+          v-model="channelName"
+          @keyup.enter="searchChannel"
         />
         <div class="absolute pin-y pin-l pl-3 flex items-center justify-center">
           <svg
@@ -41,24 +43,36 @@ export default {
   data() {
     return {
       userAdded: null,
+      channelName: null,
     }
   },
   mounted() {
     this.$socket.on('addedMemberToChannel', (member) => {
-      if(member.channelId === this.inChannel.channelId) {
-        const fullName = `${member.member_data.name} ${member.member_data.lastName}`;
-
-        this.userAdded = fullName;
-
-        setTimeout(() => {
-          this.userAdded = null;
-        }, 5000);
-      }
+      if(this.inChannel !== null) {
+        if(member.channelId === this.inChannel.channelId) {
+          const fullName = `${member.member_data.name} ${member.member_data.lastName}`;
+  
+          this.userAdded = fullName;
+  
+          setTimeout(() => {
+            this.userAdded = null;
+          }, 5000);
+        }
+      } 
     });
   },
   computed: {
     inChannel() {
       return this.$store.state.channel.inChannel;
+    }
+  },
+  methods: {
+    searchChannel() {
+      this.$store.dispatch('channel/searchChannelByName', this.channelName)
+        .then(() => {
+          this.$store.dispatch('dialogs/toggleSearchChannelDialog', true);
+          this.channelName = null;
+        })
     }
   },
 }

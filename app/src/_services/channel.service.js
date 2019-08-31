@@ -8,7 +8,8 @@ export const channelService = {
   getDataByUser,
   getChannelMembers,
   getChannelMembersData,
-  addMember
+  addMember,
+  searchByName
 };
 
 function register(channel) {
@@ -96,6 +97,15 @@ function addMember(data) {
   };
 
   return fetch('http://localhost:3001/channel/member/new', requestOptions).then(handleResponse);
+}
+
+function searchByName(channelName) {
+  const requestOptions = {
+    method: 'GET',
+    headers: authHeader()
+  };
+
+  return fetch(`http://localhost:3001/channel/${channelName}/search`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

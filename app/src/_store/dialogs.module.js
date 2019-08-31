@@ -1,7 +1,8 @@
 const state = {
   isOpen: {
     newChannel: false,
-    newChannelMember: false
+    newChannelMember: false,
+    searchChannel: false,
   }
 };
 
@@ -12,6 +13,9 @@ const mutations = {
   toggleNewChanneMemberlDialog(state, value) {
     state.isOpen.newChannelMember = value;
   },
+  toggleSearchChannelDialog(state, value) {
+    state.isOpen.searchChannel = value;
+  },
 };
 
 const actions = {
@@ -20,6 +24,9 @@ const actions = {
   },
   toggleNewChanneMemberlDialog({ commit }, value) {
     commit('toggleNewChanneMemberlDialog', value);
+  },
+  toggleSearchChannelDialog({ commit }, value) {
+    commit('toggleSearchChannelDialog', value);
   },
 };
 

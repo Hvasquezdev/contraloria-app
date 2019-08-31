@@ -14,6 +14,9 @@
     <!-- Dialog / New Channel Member Form -->
     <add-member-dialog v-if="showNewMemberDialog"></add-member-dialog>
 
+    <!-- Dialog / Search Channel -->
+    <search-channel-dialog v-if="showSearchChannelDialog"></search-channel-dialog>
+
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
 
@@ -63,8 +66,9 @@ const ChatNavbar = () => import('@/components/chat/Navbar.vue');
 const ChatSidebar = () => import('@/components/chat/Sidebar.vue');
 const ChannelUsersList = () => import('@/components/chat/UserList.vue');
 const NewChannelDialog = () => import('@/components/dialogs/NewChannelDialog.vue');
-const AddMemberDialog = () => import('@/components/dialogs/AddMemberDialog.vue');
 const MessageComponent = () => import('@/components/chat/Message.vue');
+const AddMemberDialog = () => import('@/components/dialogs/AddMemberDialog.vue');
+const SearchChannelDialog = () => import('@/components/dialogs/SearchChannelDialog.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -104,7 +108,8 @@ export default {
     ChannelUsersList,
     NewChannelDialog,
     AddMemberDialog,
-    MessageComponent
+    MessageComponent,
+    SearchChannelDialog
   },
   data() {
     return {
@@ -140,10 +145,13 @@ export default {
   },
   computed: {
     showNewChannelDialog() {
-      return this.$store.state.dialogs.isOpen.newChannel
+      return this.$store.state.dialogs.isOpen.newChannel;
     },
     showNewMemberDialog() {
-      return this.$store.state.dialogs.isOpen.newChannelMember
+      return this.$store.state.dialogs.isOpen.newChannelMember;
+    },
+    showSearchChannelDialog() {
+      return this.$store.state.dialogs.isOpen.searchChannel;
     },
     inChannel() {
       return this.$store.state.channel.inChannel;

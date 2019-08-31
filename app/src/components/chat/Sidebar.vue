@@ -111,12 +111,42 @@ export default {
       required: true
     }
   },
+  mounted() {
+    this.getPublicChannels();
+    this.getPrivateChannels();
+    this.$socket.on('reloadSidebar', (member) => {
+      const channelFound = this.$store.state.channel.channelFound;
+
+      const dataToPush = {
+        channelId: channelFound[0].id,
+        channel_data: [
+          channelFound[0],
+        ],
+        memberId: member.memberId,
+      }
+
+      if(channelFound[0].type === 'privado') {
+        this.privateChannels.push(dataToPush);
+      } else {
+        this.publicChannels.push(dataToPush);
+      }
+    });
+  },
+  data() {
+    return {
+      publicChannels: [],
+      privateChannels: [],
+    }
+  },
   methods: {
     logOut() {
       this.$store.dispatch('account/logout');
     },
     openNewChannelDialog() {
       this.$store.dispatch('dialogs/toggleNewChannelDialog', true);
+    },
+    prueba() {
+      this.privateChannels.push({ channel_data: [ {name: 'asdasd'} ] })
     },
     setSelectedChannel(channel) {
       if(this.inChannel && channel.channelId === this.inChannel.channelId) return;
@@ -131,15 +161,15 @@ export default {
           this.$emit('setChannelMessages', messages);
         })
         .catch((error) => console.log(error));
+    },
+    getPublicChannels() {
+      this.publicChannels = this.channels.filter(channel => channel.channel_data[0].type === 'publico') || [];
+    },
+    getPrivateChannels() {
+      this.privateChannels = this.channels.filter(channel => channel.channel_data[0].type === 'privado') || [];
     }
   },
   computed: {
-    privateChannels() {
-      return this.channels.filter(channel => channel.channel_data[0].type === 'privado') || [];
-    },
-    publicChannels() {
-      return this.channels.filter(channel => channel.channel_data[0].type === 'publico') || [];
-    },
     inChannel() {
       return this.$store.state.channel.inChannel;
     }
