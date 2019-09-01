@@ -39,7 +39,7 @@
       <div class="flex button-add-member items-center pb-2 pt-4 px-4 mb-2 opacity-50 cursor-pointer">
         <button 
           class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-full"
-          :class="{ 'disabled-button': !inChannel }"
+          :class="{ 'disabled-button': !inChannel || loggedUser && loggedUser.rol.name !== 'admin' }"
           @click="openNewChannelMemberDialog"
         >
           Agregar
@@ -87,7 +87,7 @@ export default {
   },
   methods: {
     openNewChannelMemberDialog() {
-      if(!this.inChannel) return;
+      if(!this.inChannel || this.loggedUser && this.loggedUser.rol.name !== 'admin') return;
       this.$store.dispatch('dialogs/toggleNewChanneMemberlDialog', true);
     },
   },
@@ -103,6 +103,9 @@ export default {
     },
     loadingChannelMembers() {
       return this.$store.state.channel.loadingChannelMembers;
+    },
+    loggedUser() {
+      return JSON.parse(localStorage.getItem('user')) || null;
     }
   },
 }

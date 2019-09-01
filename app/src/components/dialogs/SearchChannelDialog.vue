@@ -16,6 +16,9 @@
       <div class="flex items-center text-gray-700 found-user__text font-normal">
         Se encontró el canal: <strong class="font-bold mr-2 ml-1 capitalize">{{ channelFound[0].name }}</strong> ({{ channelFound[0].type }})
       </div>
+      <div class="flex items-center text-gray-700 found-user__text font-normal" v-if="channelFound[0].type === 'privado'">
+        Contacte con un administrador para unirse al canal privado
+      </div>
     </div>
 
     <div class="w-full mb-4 mt-6" v-if="channelFound.length > 0 && !this.errors && this.userAdded">
@@ -33,7 +36,7 @@
         Cerrar
       </button>
       <button
-        v-if="channelFound.length > 0 && !userAdded"
+        v-if="channelFound.length > 0 && !userAdded && channelFound[0].type !== 'privado'"
         class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded flex-1"
         @click="handleSubmit"
       >

@@ -21,7 +21,7 @@
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
         <div class="opacity-75 font-semibold">Canales Privados</div>
-        <div class="add-channel-btn" @click="openNewChannelDialog">
+        <div class="add-channel-btn" @click="openNewChannelDialog" v-if="user.rol.name !== 'user'">
           <svg
             class="fill-current h-4 w-4 opacity-50"
             xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +34,13 @@
         </div>
       </div>
       <template v-if="privateChannels.length > 0">
-        <div class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-75 hover:bg-blue-900 channel-link" v-for="(channel, index) in privateChannels" :key="index">
+        <div 
+          class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-75 hover:bg-blue-900 channel-link"
+          :class="{ 'active-channel': inChannel && inChannel.channelId === channel.channelId }"
+          v-for="(channel, index) in privateChannels" 
+          :key="index"
+          @click="setSelectedChannel(channel)"
+        >
           {{ channel.channel_data[0].name }}
         </div>
       </template>
@@ -47,7 +53,7 @@
     <div class="mb-8">
       <div class="px-4 mb-2 text-white flex justify-between items-center">
         <div class="opacity-75 font-semibold">Canales Publicos</div>
-        <div class="add-channel-btn" @click="openNewChannelDialog">
+        <div class="add-channel-btn" @click="openNewChannelDialog" v-if="user.rol.name !== 'user'">
           <svg
             class="fill-current h-4 w-4 opacity-50"
             xmlns="http://www.w3.org/2000/svg"

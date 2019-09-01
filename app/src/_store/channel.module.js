@@ -69,23 +69,33 @@ const mutations = {
   searchChannelFailure(state) {
     state.status = { searchingChannel: false };
   },
+
+  setChannelFound(state, channel) {
+    state.channelFound = channel;
+  }
 };
 
 const actions = {
   register({ dispatch, commit }, channel) {
     commit('registerRequest', channel);
-    console.log(channel)
 
-    channelService.register(channel)
-      .then((channel) => {
-        commit('registerSuccess', channel);
+    return channelService.register(channel)
+      .then((response) => {
+        commit('registerSuccess', response);
         setTimeout(() => {
           dispatch('alert/success', 'Registration successful', { root: true });
         });
+        const dataToReturn = {
+          response,
+          channel
+        };
+
+        return dataToReturn;
       },
       (error) => {
         commit('registerFailure', error);
         dispatch('alert/error', error, { root: true });
+        throw error;
       });
   },
   getChannelsByUser(context, userId) {
@@ -153,6 +163,9 @@ const actions = {
         commit('searchChannelFailure');
         throw error;
       });
+  },
+  setChannelFound({ commit }, channel) {
+    commit('setChannelFound', channel);
   }
 };
 

@@ -71,7 +71,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('channel', ['register']),
+    ...mapActions('channel', ['register', 'addMember', 'setChannelFound']),
     closeDialog() {
       this.$store.dispatch('dialogs/toggleNewChannelDialog', false)
     },
@@ -84,13 +84,34 @@ export default {
       if(this.channel.name && this.channel.type) {
         this.errors = null;
         this.register(channelData)
-          .then(() => {
-            this.closeDialog();
+          .then((data) => {
+            console.log('hola', data)
+            const user = JSON.parse(localStorage.getItem('user'));
+            const memberData = {
+              memberId: user.data.id,
+              channelId: data.response.channel,
+              member_data: user.data
+            };
+            this.setChannelFound([data.channel]);
+            this.addUserToChannel(memberData);
           })
           .catch(error => console.log(error));
       } else {
         this.errors = 'Por favor rellene todos los campos'
       }
+    },
+    addUserToChannel(data) {
+      this.addMember(data)
+        .then((response) => {
+          if(response && response.ok) {
+            setTimeout(() => {
+              this.closeDialog();
+            }, 1000);
+          }
+        })
+        .catch((error) => {
+          console.log('Error:', error);
+        });
     }
   },
 }
