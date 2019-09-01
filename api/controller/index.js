@@ -30,7 +30,7 @@ exports.new_user = function(req, res) {
       if(err) {
         res.send(err);
       } else {
-        if(user.length >= 1) return res.status(400).send({ error: true, message: 'Username is already registered' });
+        if(user.length >= 1) return res.send({ error: true, message: 'El nombre de usuario ya existe', status: 409 });
         
         // If username is not taken then save the user
         User.newUser(newUser, function(err, user) {

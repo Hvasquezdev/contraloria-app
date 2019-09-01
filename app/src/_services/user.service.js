@@ -21,8 +21,7 @@ function login(userName, password) {
   return fetch(`http://localhost:3001/user/authenticate`, requestOptions)
     .then(handleResponse)
     .then((user) => {
-      console.log(user);
-      if(user.data.token) {
+      if(!user.status && user.data.token) {
         localStorage.setItem('user', JSON.stringify(user));
       }
 

@@ -20,33 +20,37 @@ User.auth = function(user, result) {
       console.log(err);
       result(err, null);
     } else {
-      const userId = userData[0].id;
-      const data = userData;
-
-      mysqlConnection.query("SELECT * FROM rol WHERE userId = ?", [userId], function(err, rol) {
-        if(err) {
-          console.log(err);
-          result(err, null);
-        } else {
-          const user = {
-            data: {
-              id: data[0].id,
-              name: data[0].name,
-              lastName: data[0].lastName,
-              userName: data[0].userName,
-              token: 'fake-jwt-token'
-            },
-            rol: {
-              id: rol[0].id,
-              name: rol[0].name,
-              status: rol[0].status
-            }
-          };
-          console.log(user)
+      if(userData[0] && userData[0].id) {
+        const userId = userData[0].id;
+        const data = userData;
   
-          result(null, user);
-        }
-      });
+        mysqlConnection.query("SELECT * FROM rol WHERE userId = ?", [userId], function(err, rol) {
+          if(err) {
+            console.log(err);
+            result(err, null);
+          } else {
+            const user = {
+              data: {
+                id: data[0].id,
+                name: data[0].name,
+                lastName: data[0].lastName,
+                userName: data[0].userName,
+                token: 'fake-jwt-token'
+              },
+              rol: {
+                id: rol[0].id,
+                name: rol[0].name,
+                status: rol[0].status
+              }
+            };
+            console.log(user)
+    
+            result(null, user);
+          }
+        });
+      } else {
+        result(null, { message: 'usuario o contraseña incorrecta', status: 401 });
+      }
     }
   });
 };

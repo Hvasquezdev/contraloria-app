@@ -66,14 +66,20 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" @click="handleSubmit">
+        <button 
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+          :class="{ 'is-disabled': isCheckingUser }"
+          type="button" 
+          @click="handleSubmit"
+        >
           Registrarse
         </button>
-        <div class="inline-block align-baseline text-sm">
+        <div class="inline-block align-baseline text-sm" :class="{ 'is-disabled': isCheckingUser }">
           ¿Ya tienes una cuenta?
           <router-link to="/login" tag="a" class="font-bold text-blue-500 hover:text-blue-800">Inicia Sesion</router-link>
         </div>
       </div>
+      <p class="text-red-600 text-xs italic pt-6" v-if="this.errors">{{ errors }}</p>
     </div>
   </default-layout>
 </template>
@@ -101,6 +107,7 @@ export default {
   methods: {
     ...mapActions('account', ['register']),
     handleSubmit() {
+      if(this.isCheckingUser) return;
       const userData = {
         name: this.user.name.toLowerCase(),
         lastName: this.user.lastName.toLowerCase(),
@@ -110,10 +117,22 @@ export default {
 
       if(this.user.name && this.user.lastName && this.user.userName && this.user.password) {
         this.errors = null;
-        this.register(userData);
+        this.register(userData)
+          .then((response) => {
+            if(response.error && response.status === 409) {
+              this.errors = response.message;
+            } else {
+              this.errors = null;
+            }
+          });
       } else {
         this.errors = 'Por favor rellene todos los campos'
       }
+    }
+  },
+  computed: {
+    isCheckingUser() {
+      return this.$store.state.account.status.checkingUser || false;
     }
   },
 };
@@ -133,5 +152,11 @@ export default {
     padding: 32px;
     box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06);
   }
+}
+
+.is-disabled {
+  opacity: .8;
+  pointer-events: none;
+  user-select: none;
 }
 </style>
