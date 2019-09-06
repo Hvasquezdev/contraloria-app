@@ -11,11 +11,11 @@
         <path class="heroicon-ui" d="M9 12A5 5 0 1 1 9 2a5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7 11a1 1 0 0 1-2 0v-2a3 3 0 0 0-3-3H7a3 3 0 0 0-3 3v2a1 1 0 0 1-2 0v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2zm1-5a1 1 0 0 1 0-2 5 5 0 0 1 5 5v2a1 1 0 0 1-2 0v-2a3 3 0 0 0-3-3zm-2-4a1 1 0 0 1 0-2 3 3 0 0 0 0-6 1 1 0 0 1 0-2 5 5 0 0 1 0 10z"/>
       </svg>
       <h1 class="font-bold text-xl text-center leading-tight truncate font-dark-blue">
-        Integrantes: <span v-if="channelMembersCount">{{ channelMembersCount }}</span>
+        Integrantes: <span v-if="channelMembersCount && inChannel">{{ channelMembersCount }}</span>
       </h1>
     </div>
     <div class="mb-8">
-      <template v-if="channelMembersCount > 0 && channelMembers && !loadingChannelMembers">
+      <template v-if="channelMembersCount > 0 && channelMembers && !loadingChannelMembers && inChannel">
         <div 
           class="flex items-center py-1 px-4 mb-2 opacity-50 cursor-pointer hover:bg-grey-100 user-item__name" 
           v-for="(member, index) in channelMembers" 
@@ -26,13 +26,13 @@
       </template>
       <div 
         class="flex items-center py-1 px-4 mb-2 opacity-50 cursor-pointer justify-center" 
-        v-if="loadingChannelMembers"
+        v-if="loadingChannelMembers && inChannel"
       >
         <the-loader></the-loader>
       </div>
       <div 
         class="flex items-center py-1 px-4 mb-2 opacity-50 cursor-pointer justify-center" 
-        v-if="channelMembersCount <= 0 || !channelMembers && !loadingChannelMembers"
+        v-if="channelMembersCount <= 0 || !channelMembers && !loadingChannelMembers || !inChannel"
       >
         <span>Selecciona un canal</span>
       </div>

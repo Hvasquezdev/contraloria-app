@@ -5,9 +5,10 @@ const state = {
     fetchingMessages: false,
     fetchingMessageText: false,
     sendingMessage: false,
-    fetchingDirectMessages: false
+    fetchingDirectMessages: false,
+    fetchingDirectMessagesContent: false
   },
-  channelMessages: [],
+  channelMessages: []
 }
 
 const mutations = {
@@ -45,6 +46,18 @@ const mutations = {
 
   getDirectMessageFailure(state) {
     state.status = { fetchingDirectMessages: false };
+  },
+
+  getDirectMessageContentRequest(state) {
+    state.status = { fetchingDirectMessagesContent: true };
+  },
+
+  getDirectMessageContentSuccess(state) {
+    state.status = { fetchingDirectMessagesContent: false };
+  },
+
+  getDirectMessageContentFailure(state) {
+    state.status = { fetchingDirectMessagesContent: false };
   },
 
   getMessagesTextRequest(state) {
@@ -107,6 +120,20 @@ const actions = { // TODO: get message author data, check if the message has med
       },
       (error) => {
         commit('getDirectMessageFailure');
+        throw error;
+      });
+  },
+
+  getDirectMessagesContent({ commit }, message) {
+    commit('getDirectMessageContentRequest');
+
+    return messageService.getDirectMessageContent(message)
+      .then((messages) => {
+        commit('getDirectMessageContentSuccess');
+        return messages;
+      },
+      (error) => {
+        commit('getDirectMessageContentFailure');
         throw error;
       });
   },

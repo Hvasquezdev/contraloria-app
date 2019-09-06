@@ -6,6 +6,7 @@
       :channels="channel_list" 
       :directMessages="dMessagesList"
       @setChannelMessages="setChannelMessages"
+      @setDirectMessagesContent="setDirectMessagesContent"
       v-if="channel_list && user"
     ></chat-sidebar>
 
@@ -38,6 +39,15 @@
           ></message-component>
         </template>
 
+        <template v-if="dMessagesContent.length > 0">
+          <message-component
+            v-for="(message, index) in dMessagesContent" :key="index"
+            :fullName="`${message.name} ${message.lastName}`"
+            :userName="message.userName"
+            :messageText="message.content"
+            :messageDate="message.date_message"
+          ></message-component>
+        </template>
       </div>
 
       <div class="pb-6 px-6 flex-none">
@@ -126,6 +136,7 @@ export default {
       channel_messages: [],
       messageText: null,
       dMessagesList: null,
+      dMessagesContent: [],
     }
   },
   methods: {
@@ -150,6 +161,9 @@ export default {
         .then(() => {
           this.messageText = null;
         });
+    },
+    setDirectMessagesContent(messages) {
+      this.dMessagesContent = messages;
     }
   },
   computed: {

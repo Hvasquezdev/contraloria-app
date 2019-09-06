@@ -41,8 +41,11 @@ module.exports = function(app, io) {
   app.route('/messages/:channelId')
     .get(message.get_all_by_channel);
 
-    app.route('/inbox/:userId')
-    .get(message.get_user_messages);
+  app.route('/inbox/:userId')
+  .get(message.get_user_messages);
+
+  app.route('/inbox/:userId/:destinationId')
+  .get(message.get_direct_message_data);
 
   app.route('/message')
     .post(function(req, res) {

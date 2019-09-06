@@ -16,6 +16,23 @@ exports.get_all_by_channel = function(req, res) {
   }
 };
 
+
+exports.get_direct_message_data = function(req, res) {
+  const { userId, destinationId } = req.params;
+
+  if (!userId || !destinationId) {
+    res.status(400).send({ error: true, message: 'Please provide the user id and destination id' });
+  } else {
+    Message.getDirectMessagesData({ userId, destinationId }, function(err, message) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(message);
+      }
+    });
+  }
+};
+
 exports.get_user_messages = function(req, res) {
   const { userId } = req.params;
 

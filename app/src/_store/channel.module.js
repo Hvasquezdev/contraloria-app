@@ -7,6 +7,7 @@ const state = {
     searchingChannel: false
   },
   userChannels: null,
+  inInbox: null,
   inChannel: null,
   inChannelMembers: null,
   loadingChannelMembers: false,
@@ -72,6 +73,10 @@ const mutations = {
 
   setChannelFound(state, channel) {
     state.channelFound = channel;
+  },
+
+  setSelectedInbox(state, message) {
+    state.inInbox = message;
   }
 };
 
@@ -130,9 +135,15 @@ const actions = {
       (error) => { throw error; });
   },
   setSelectedChannel({ commit, dispatch }, channel) {
-    commit('setLoadingChannelMembers', true);
-    dispatch('getChannelMembers', channel.channelId);
+    if(channel) {
+      commit('setLoadingChannelMembers', true);
+      dispatch('getChannelMembers', channel.channelId);
+    }
     commit('setSelectedChannel', channel);
+  },
+  setSelectedInbox({ commit }, message) {
+    commit('setSelectedInbox', message);
+    return message;
   },
   addMember({ commit, dispatch }, data) {
     commit('addMemberRequest');

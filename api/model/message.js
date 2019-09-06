@@ -18,7 +18,17 @@ Message.getAllByChannel = function(channelId, result) {
 };
 
 Message.getUserDirectMessages = function(userId, result) {
-  mysqlConnection.query("SELECT name, lastName, userId, destinationId FROM message T1 INNER JOIN users T2 ON T2.id = T1.destinationId WHERE T1.userId = ? OR T1.destinationId = ?", [userId, userId], function(err, res) {
+  mysqlConnection.query("SELECT T1.id, name, lastName, userId, destinationId FROM message T1 INNER JOIN users T2 ON T2.id = T1.destinationId WHERE T1.userId = ? OR T1.destinationId = ?", [userId, userId], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
+Message.getDirectMessagesData = function(message, result) {
+  mysqlConnection.query("SELECT name, lastName, userName, content, date_message FROM message T1 INNER JOIN message_content T2 ON T2.messageId = T1.id INNER JOIN message_text T3 ON T3.messageContentId = T2.id INNER JOIN users T4 ON T4.id = T2.authorId WHERE T1.userId = ? OR T1.destinationId = ?", [message.userId, message.destinationId], function(err, res) {
     if(err) {
       result(err, null);
     } else {

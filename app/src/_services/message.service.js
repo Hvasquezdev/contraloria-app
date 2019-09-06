@@ -3,7 +3,8 @@ import { authHeader } from '../_helpers';
 export const messageService = {
   getAllByChannel,
   sendMessageToChannel,
-  getByUserId
+  getByUserId,
+  getDirectMessageContent
 };
 
 function getAllByChannel(channelId) {
@@ -22,6 +23,16 @@ function getByUserId(userId) {
   };
 
   return fetch(`http://localhost:3001/inbox/${userId}`, requestOptions).then(handleResponse);
+}
+
+function getDirectMessageContent(message) {
+  const requestOptions = {
+    method: 'GET',
+    headers: authHeader()
+  };
+  const { userId, destinationId } = message;
+
+  return fetch(`http://localhost:3001/inbox/${userId}/${destinationId}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

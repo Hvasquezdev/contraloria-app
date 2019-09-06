@@ -2,6 +2,7 @@
   <div class="border-b flex px-6 py-2 items-center flex-none">
     <div class="flex flex-col">
       <h3 class="mb-1 font-extrabold capitalize font-dark-blue" v-if="inChannel">#{{ inChannel.channel_data[0].name }}</h3>
+      <h3 class="mb-1 font-extrabold capitalize font-dark-blue" v-else-if="inChannelInbox">#{{ inChannelInbox.name }} {{ inChannelInbox.lastName }}</h3>
       <h3 class="mb-1 font-extrabold font-dark-blue" v-else>#Selecciona un canal</h3>
       <transition name="fade">
         <div
@@ -64,6 +65,9 @@ export default {
   computed: {
     inChannel() {
       return this.$store.state.channel.inChannel;
+    },
+    inChannelInbox() {
+      return this.$store.state.channel.inInbox;
     }
   },
   methods: {

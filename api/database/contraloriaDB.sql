@@ -13,12 +13,10 @@
 
 
 -- Volcando estructura de base de datos para contraloria-app
-DROP DATABASE IF EXISTS `contraloria-app`;
 CREATE DATABASE IF NOT EXISTS `contraloria-app` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `contraloria-app`;
 
 -- Volcando estructura para tabla contraloria-app.channel
-DROP TABLE IF EXISTS `channel`;
 CREATE TABLE IF NOT EXISTS `channel` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(155) NOT NULL,
@@ -28,17 +26,15 @@ CREATE TABLE IF NOT EXISTS `channel` (
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.channel_member
-DROP TABLE IF EXISTS `channel_member`;
 CREATE TABLE IF NOT EXISTS `channel_member` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `memberId` int(11) DEFAULT NULL,
   `channelId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.channel_message
-DROP TABLE IF EXISTS `channel_message`;
 CREATE TABLE IF NOT EXISTS `channel_message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) DEFAULT NULL,
@@ -50,7 +46,6 @@ CREATE TABLE IF NOT EXISTS `channel_message` (
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.channel_message_media
-DROP TABLE IF EXISTS `channel_message_media`;
 CREATE TABLE IF NOT EXISTS `channel_message_media` (
   `id` int(11) NOT NULL,
   `content` varchar(255) DEFAULT NULL,
@@ -62,7 +57,6 @@ CREATE TABLE IF NOT EXISTS `channel_message_media` (
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.channel_message_text
-DROP TABLE IF EXISTS `channel_message_text`;
 CREATE TABLE IF NOT EXISTS `channel_message_text` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `content` varchar(255) DEFAULT NULL,
@@ -73,32 +67,39 @@ CREATE TABLE IF NOT EXISTS `channel_message_text` (
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.message
-DROP TABLE IF EXISTS `message`;
 CREATE TABLE IF NOT EXISTS `message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) DEFAULT NULL,
-  `messageDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `destinationId` int(11) DEFAULT NULL,
-  `hasMedia` int(11) DEFAULT '0',
-  `hasText` int(11) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- La exportación de datos fue deseleccionada.
+-- Volcando estructura para tabla contraloria-app.message_content
+CREATE TABLE IF NOT EXISTS `message_content` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_message` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `hasMedia` int(11) NOT NULL DEFAULT '0',
+  `hasText` int(11) NOT NULL DEFAULT '1',
+  `messageId` int(11) DEFAULT NULL,
+  `authorId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.message_text
-DROP TABLE IF EXISTS `message_text`;
 CREATE TABLE IF NOT EXISTS `message_text` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `content` varchar(255) DEFAULT NULL,
-  `messageId` int(11) DEFAULT NULL,
+  `messageContentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.rol
-DROP TABLE IF EXISTS `rol`;
 CREATE TABLE IF NOT EXISTS `rol` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) DEFAULT 'user',
@@ -110,7 +111,6 @@ CREATE TABLE IF NOT EXISTS `rol` (
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.users
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,

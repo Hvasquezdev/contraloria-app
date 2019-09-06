@@ -100,8 +100,10 @@
       <template v-if="directMessages.length > 0">
         <div 
           class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-50 channel-link capitalize"
+          :class="{ 'active-channel': inInbox && inInbox.id === message.id }"
           v-for="(message, index) in directMessages" 
           :key="index"
+          @click="setSelectedInbox(message)"
         >
           {{ message.name }} {{ message.lastName }}
         </div>
@@ -172,8 +174,31 @@ export default {
     setSelectedChannel(channel) {
       if(this.inChannel && channel.channelId === this.inChannel.channelId) return;
 
+      if(this.inInbox) {
+        this.$store.dispatch('channel/setSelectedInbox', null);
+        this.$emit('setDirectMessagesContent', []);
+      }
+
       this.$store.dispatch('channel/setSelectedChannel', channel);
       this.getChannelMessages(channel.channelId);
+    },
+    setSelectedInbox(message) {
+      if(this.inInbox && message.id === this.inInbox.id) return;
+
+      if(this.inChannel) {
+        this.$store.dispatch('channel/setSelectedChannel', null);
+        this.$emit('setChannelMessages', []);
+      }
+
+      this.$store.dispatch('channel/setSelectedInbox', message)
+        .then(() => {
+          this.$store.dispatch('message/getDirectMessagesContent', message)
+            .then((messages) => {
+              this.$emit('setDirectMessagesContent', messages);
+            })
+            .catch((error) => console.log(error));
+        })
+        .catch((error) => console.log(error));
     },
     getChannelMessages(channelId) {
       this.channelMessage = [];
@@ -193,7 +218,10 @@ export default {
   computed: {
     inChannel() {
       return this.$store.state.channel.inChannel;
-    }
+    },
+    inInbox() {
+      return this.$store.state.channel.inInbox;
+    },
   },
 }
 </script>
