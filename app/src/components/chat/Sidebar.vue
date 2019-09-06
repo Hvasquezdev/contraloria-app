@@ -97,9 +97,20 @@
           </svg>
         </div>
       </div>
-      <div class="flex items-center px-4 mb-6 opacity-50">
-        <span class="text-white">Ronaldo Cardenas</span>
-      </div>
+      <template v-if="directMessages.length > 0">
+        <div 
+          class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-50 channel-link capitalize"
+          v-for="(message, index) in directMessages" 
+          :key="index"
+        >
+          {{ message.name }} {{ message.lastName }}
+        </div>
+      </template>
+      <template v-else>
+        <div class="py-1 px-4 text-white text-sm">
+          No tienes mensajes privados
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -113,6 +124,10 @@ export default {
       required: true
     },
     channels: {
+      type: Array,
+      required: true
+    },
+    directMessages: {
       type: Array,
       required: true
     }

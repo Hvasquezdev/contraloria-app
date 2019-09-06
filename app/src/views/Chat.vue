@@ -4,6 +4,7 @@
     <chat-sidebar 
       :user="user" 
       :channels="channel_list" 
+      :directMessages="dMessagesList"
       @setChannelMessages="setChannelMessages"
       v-if="channel_list && user"
     ></chat-sidebar>
@@ -87,6 +88,13 @@ export default {
             this.channel_list = channels;
           });
       });
+    this.$store.dispatch('message/getDirectMessagesByUser', user.data.id)
+      .then(messages => {
+        this.dMessagesList = messages;
+      })
+      .catch(error => {
+        console.log(error);
+      });
     this.$socket.on('sentMessageToChannel', (message) => {
       if(message.destinationId === this.inChannel.channelId) {
         const user = this.user;
@@ -117,6 +125,7 @@ export default {
       channel_list: null,
       channel_messages: [],
       messageText: null,
+      dMessagesList: null,
     }
   },
   methods: {

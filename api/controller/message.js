@@ -14,7 +14,23 @@ exports.get_all_by_channel = function(req, res) {
       }
     });
   }
-}
+};
+
+exports.get_user_messages = function(req, res) {
+  const { userId } = req.params;
+
+  if (!userId) {
+    res.status(400).send({ error: true, message: 'Please provide the user id' });
+  } else {
+    Message.getUserDirectMessages(userId, function(err, messages) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(messages);
+      }
+    });
+  }
+};
 
 exports.send_message_to_channel = function(req, res, io) {
   const newMessage = req.body;

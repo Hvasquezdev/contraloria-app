@@ -41,6 +41,9 @@ module.exports = function(app, io) {
   app.route('/messages/:channelId')
     .get(message.get_all_by_channel);
 
+    app.route('/inbox/:userId')
+    .get(message.get_user_messages);
+
   app.route('/message')
     .post(function(req, res) {
       return message.send_message_to_channel(req, res, io);

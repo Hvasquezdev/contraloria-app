@@ -5,6 +5,7 @@ const state = {
     fetchingMessages: false,
     fetchingMessageText: false,
     sendingMessage: false,
+    fetchingDirectMessages: false
   },
   channelMessages: [],
 }
@@ -32,6 +33,18 @@ const mutations = {
 
   getMessagesFailure(state) {
     state.status = { fetchingMessages: false };
+  },
+
+  getDirectMessageRequest(state) {
+    state.status = { fetchingDirectMessages: true };
+  },
+
+  getDirectMessageSuccess(state) {
+    state.status = { fetchingDirectMessages: false };
+  },
+
+  getDirectMessageFailure(state) {
+    state.status = { fetchingDirectMessages: false };
   },
 
   getMessagesTextRequest(state) {
@@ -80,6 +93,20 @@ const actions = { // TODO: get message author data, check if the message has med
       },
       (error) => {
         commit('sendMessageFailure');
+        throw error;
+      });
+  },
+
+  getDirectMessagesByUser({ commit }, userId) {
+    commit('getDirectMessageRequest');
+
+    return messageService.getByUserId(userId)
+      .then((messages) => {
+        commit('getDirectMessageSuccess');
+        return messages;
+      },
+      (error) => {
+        commit('getDirectMessageFailure');
         throw error;
       });
   },

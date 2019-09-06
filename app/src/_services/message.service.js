@@ -2,7 +2,8 @@ import { authHeader } from '../_helpers';
 
 export const messageService = {
   getAllByChannel,
-  sendMessageToChannel
+  sendMessageToChannel,
+  getByUserId
 };
 
 function getAllByChannel(channelId) {
@@ -12,6 +13,15 @@ function getAllByChannel(channelId) {
   };
 
   return fetch(`http://localhost:3001/messages/${channelId}`, requestOptions).then(handleResponse);
+}
+
+function getByUserId(userId) {
+  const requestOptions = {
+    method: 'GET',
+    headers: authHeader()
+  };
+
+  return fetch(`http://localhost:3001/inbox/${userId}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {
