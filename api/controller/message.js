@@ -67,3 +67,22 @@ exports.send_message_to_channel = function(req, res, io) {
     });
   }
 };
+
+exports.send_direct_message = function(req, res, io) {
+  const newMessage = req.body;
+  console.log('Controller sending direct message');
+
+  if(!newMessage.userId || !newMessage.destinationId) {
+    res.status(400).send({ error: true, message: 'Please provide the complete message data' });
+  } else {
+
+    Message.sendDirectMessage(newMessage, function(err, message) {
+      if(err) {
+        res.send(err);
+      } else {
+        io.sockets.emit('sentDirectMessage', newMessage);
+        res.status(200).send({ error: false, message: 'Message sent correctly', message });
+      }
+    });
+  }
+}

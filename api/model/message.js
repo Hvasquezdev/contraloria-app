@@ -99,7 +99,71 @@ Message.sendMessageToChannel = function(message, result) {
       }
     }
   });
-}
+};
+
+Message.sendDirectMessage = function(message, result) {
+  const messageData = {
+    authorId: message.userId,
+    messageId: message.destinationId,
+    hasMedia: message.hasMedia,
+    hasText: message.hasText
+  };
+
+  mysqlConnection.query("INSERT INTO message_content set ?", messageData, function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      const messageTextData = {
+        content: message.text.content || null,
+        messageContentId: res.insertId
+      };
+    
+      // const messageMediaData = {
+      //   content: message.media.content || null,
+      //   type: message.media.type || null,
+      //   channel_message_id: res.insertId
+      // };
+
+      if(messageData.hasText && messageData.hasMedia) {
+
+        mysqlConnection.query("INSERT INTO channel_message_text set ?", messageTextData, function(err, res) {
+          if(err) {
+            result(err, null);
+          } else {
+            // mysqlConnection.query("INSERT INTO channel_message_media set ?", messageMediaData, function(err, res) {
+            //   if(err) {
+            //     result(err, null);
+            //   } else {
+            //     result(null, res);
+            //   }
+            // });
+          }
+        });
+
+      } else if(messageData.hasText && !messageData.hasMedia) {
+
+        mysqlConnection.query("INSERT INTO message_text set ?", messageTextData, function(err, res) {
+          if(err) {
+            result(err, null);
+          } else {
+            result(null, res);
+          }
+        });
+
+      } else {
+
+        // mysqlConnection.query("INSERT INTO channel_message_media set ?", messageMediaData, function(err, res) {
+        //   if(err) {
+        //     result(err, null);
+        //   } else {
+        //     result(null, res);
+        //   }
+        // });
+
+      }
+    }
+  });
+};
 
 module.exports = {
   Message

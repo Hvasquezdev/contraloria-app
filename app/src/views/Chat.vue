@@ -98,6 +98,7 @@ export default {
             this.channel_list = channels;
           });
       });
+
     this.$store.dispatch('message/getDirectMessagesByUser', user.data.id)
       .then(messages => {
         this.dMessagesList = messages;
@@ -105,6 +106,7 @@ export default {
       .catch(error => {
         console.log(error);
       });
+
     this.$socket.on('sentMessageToChannel', (message) => {
       if(message.destinationId === this.inChannel.channelId) {
         const user = this.user;
@@ -118,7 +120,22 @@ export default {
 
         this.channel_messages.push(messageData);
       }
-    })
+    });
+
+    this.$socket.on('sentDirectMessage', (message) => {
+      if(message.destinationId === this.inInbox.id) {
+        const user = this.user;
+        const messageData = {
+          name: user.data.name,
+          lastName: user.data.lastName,
+          userName: user.data.userName,
+          content: message.text.content,
+          date_message: new Date().toLocaleDateString()
+        };
+
+        this.dMessagesContent.push(messageData);
+      }
+    });
   },
   components: {
     ChatNavbar,
@@ -144,11 +161,12 @@ export default {
       this.channel_messages = messages;
     },
     sendMessage() {
-      if(!this.inChannel) return;
+      if(!this.inChannel && !this.inInbox) return;
 
+      const destinationId = this.inChannel ? this.inChannel.channelId : this.inInbox.id;
       const message = {
         userId: this.user.data.id,
-        destinationId: this.inChannel.channelId,
+        destinationId: destinationId,
         hasMedia: 0,
         hasText: 1,
         media: {},
@@ -157,10 +175,18 @@ export default {
         }
       };
 
-      this.$store.dispatch('message/sendMessageToChannel', message)
-        .then(() => {
-          this.messageText = null;
-        });
+      if(this.inInbox) {
+        this.$store.dispatch('message/sendDirectMessage', message)
+          .then(() => {
+            this.messageText = null;
+          });
+      } else {
+        this.$store.dispatch('message/sendMessageToChannel', message)
+          .then(() => {
+            this.messageText = null;
+          });
+      }
+
     },
     setDirectMessagesContent(messages) {
       this.dMessagesContent = messages;
@@ -178,6 +204,9 @@ export default {
     },
     inChannel() {
       return this.$store.state.channel.inChannel;
+    },
+    inInbox() {
+      return this.$store.state.channel.inInbox;
     }
   },
 };

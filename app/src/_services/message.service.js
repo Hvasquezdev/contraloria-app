@@ -4,7 +4,8 @@ export const messageService = {
   getAllByChannel,
   sendMessageToChannel,
   getByUserId,
-  getDirectMessageContent
+  getDirectMessageContent,
+  sendDirectMessage
 };
 
 function getAllByChannel(channelId) {
@@ -35,6 +36,26 @@ function getDirectMessageContent(message) {
   return fetch(`http://localhost:3001/inbox/${userId}/${destinationId}`, requestOptions).then(handleResponse);
 }
 
+function sendMessageToChannel(message) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(message),
+  };
+
+  return fetch('http://localhost:3001/message', requestOptions).then(handleResponse);
+}
+
+function sendDirectMessage(message) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(message),
+  };
+
+  return fetch('http://localhost:3001/inbox', requestOptions).then(handleResponse);
+}
+
 function handleResponse(response) {
   return response.text().then((text) => {
     const data = text && JSON.parse(text);
@@ -51,14 +72,4 @@ function handleResponse(response) {
 
     return data;
   });
-}
-
-function sendMessageToChannel(message) {
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(message),
-  };
-
-  return fetch('http://localhost:3001/message', requestOptions).then(handleResponse);
 }

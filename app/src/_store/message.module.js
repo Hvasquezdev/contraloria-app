@@ -110,6 +110,20 @@ const actions = { // TODO: get message author data, check if the message has med
       });
   },
 
+  sendDirectMessage({ commit }, message) {
+    commit('sendMessageRequest');
+
+    return messageService.sendDirectMessage(message)
+      .then((response) => {
+        commit('sendMessageSuccess');
+        return response;
+      },
+      (error) => {
+        commit('sendMessageFailure');
+        throw error;
+      });
+  },
+
   getDirectMessagesByUser({ commit }, userId) {
     commit('getDirectMessageRequest');
 
