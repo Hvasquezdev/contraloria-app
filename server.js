@@ -3,6 +3,19 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const socketIo = require('socket.io');
+const path = require('path');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, './api/uploaded');
+  },
+  filename: (req, file, callback) => {
+    callback(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
+  }
+});
+
+const upload = multer({ storage });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -29,4 +42,4 @@ io.on('connection', () =>{
 
 // Routes
 const routes = require('./api/routes');
-routes(app, io);
+routes(app, io, upload);

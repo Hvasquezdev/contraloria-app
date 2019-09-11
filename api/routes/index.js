@@ -1,4 +1,4 @@
-module.exports = function(app, io) {
+module.exports = function(app, io, upload) {
   const users = require('../controller');
   const channel = require('../controller/channel');
   const message = require('../controller/message');
@@ -55,5 +55,11 @@ module.exports = function(app, io) {
   app.route('/message')
     .post(function(req, res) {
       return message.send_message_to_channel(req, res, io);
+    });
+
+  app.route('/message/media')
+    .post(upload.single('file'), function(req, res) {
+      console.log(`Storage location is ${req.file.path}`);
+      return message.send_message_media_to_channel(req, res, io);
     });
 }

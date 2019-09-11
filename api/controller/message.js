@@ -61,8 +61,31 @@ exports.send_message_to_channel = function(req, res, io) {
       if(err) {
         res.send(err);
       } else {
-        io.sockets.emit('sentMessageToChannel', newMessage);
+        if(!newMessage.hasMedia) {
+          io.sockets.emit('sentMessageToChannel', newMessage);
+        } else {
+          io.sockets.emit('sentMessageToChannelWithMedia', newMessage);
+        }
         res.status(200).send({ error: false, message: 'Message sent correctly', message });
+      }
+    });
+  }
+};
+
+exports.send_message_media_to_channel = function(req, res, io) {
+  const mediaData = { ...req.file, ...req.body };
+  console.log('Controller sending message media');
+
+  if(!mediaData.filename) {
+    res.status(400).send({ error: true, message: 'Please provide the file' });
+  } else {
+
+    Message.sendMessageMediaToChannel(mediaData, function(err, message) {
+      if(err) {
+        res.send(err);
+      } else {
+        io.sockets.emit('sentMessageToChannelMedia', mediaData);
+        res.status(200).send({ error: false, message: 'Message media saved correctly', message });
       }
     });
   }

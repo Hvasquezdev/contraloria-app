@@ -43,7 +43,26 @@ function sendMessageToChannel(message) {
     body: JSON.stringify(message),
   };
 
-  return fetch('http://localhost:3001/message', requestOptions).then(handleResponse);
+  return fetch('http://localhost:3001/message', requestOptions).then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      if(message.hasMedia) {
+        console.log('enviando media')
+        let formData  = new FormData();
+    
+        formData.append('file', message.media);
+        formData.append('channel_message_id', parseInt(data.message.insertId));
+    
+        const requestMediaOptions = {
+          method: 'POST',
+          body: formData,
+        };
+    
+        return fetch('http://localhost:3001/message/media', requestMediaOptions).then(handleResponse);
+      } else {
+        return handleResponse(data);
+      }
+    });
 }
 
 function sendDirectMessage(message) {

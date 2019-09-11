@@ -53,53 +53,35 @@ Message.sendMessageToChannel = function(message, result) {
         content: message.text.content || null,
         channel_message_id: res.insertId
       };
-    
-      const messageMediaData = {
-        content: message.media.content || null,
-        type: message.media.type || null,
-        channel_message_id: res.insertId
-      };
 
-      if(messageData.hasText && messageData.hasMedia) {
-
-        mysqlConnection.query("INSERT INTO channel_message_text set ?", messageTextData, function(err, res) {
-          if(err) {
-            result(err, null);
-          } else {
-            mysqlConnection.query("INSERT INTO channel_message_media set ?", messageMediaData, function(err, res) {
-              if(err) {
-                result(err, null);
-              } else {
-                result(null, res);
-              }
-            });
-          }
-        });
-
-      } else if(messageData.hasText && !messageData.hasMedia) {
-
-        mysqlConnection.query("INSERT INTO channel_message_text set ?", messageTextData, function(err, res) {
-          if(err) {
-            result(err, null);
-          } else {
-            result(null, res);
-          }
-        });
-
-      } else {
-
-        mysqlConnection.query("INSERT INTO channel_message_media set ?", messageMediaData, function(err, res) {
-          if(err) {
-            result(err, null);
-          } else {
-            result(null, res);
-          }
-        });
-
-      }
+      mysqlConnection.query("INSERT INTO channel_message_text set ?", messageTextData, function(err, res) {
+        if(err) {
+          result(err, null);
+        } else {
+          result(null, res);
+        }
+      });
     }
   });
 };
+
+Message.sendMessageMediaToChannel = function(message, result) {
+  console.log(message)
+  const mediaData = {
+    mimetype: message.mimetype, 
+    filename: message.filename, 
+    path: message.path, 
+    size: message.size, 
+    channel_message_id: parseInt(message.channel_message_id)
+  }
+  mysqlConnection.query("INSERT INTO channel_message_media set ?", mediaData, function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+}
 
 Message.sendDirectMessage = function(message, result) {
   const messageData = {

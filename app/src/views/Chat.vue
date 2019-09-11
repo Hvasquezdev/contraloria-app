@@ -52,7 +52,7 @@
 
       <div class="pb-6 px-6 flex-none">
         <div class="flex rounded-lg border-1 border-dark-blue overflow-hidden">
-          <span class="text-3xl text-green-900 border-r-1 border-dark-blue p-2 cursor-pointer">
+          <span class="text-3xl text-green-900 border-r-1 border-dark-blue p-2 cursor-pointer" @click="$refs.file.click()">
             <svg
               class="fill-current h-6 w-6 block"
               xmlns="http://www.w3.org/2000/svg"
@@ -63,6 +63,7 @@
               />
             </svg>
           </span>
+          <input type="file" ref="file" class="hidden" @change="setMedia" />
           <input type="text" class="w-full px-4 font-dark-blue" placeholder="Escribe tu mensaje" v-model="messageText" @keyup.enter="sendMessage" />
         </div>
       </div>
@@ -107,35 +108,10 @@ export default {
         console.log(error);
       });
 
-    this.$socket.on('sentMessageToChannel', (message) => {
-      if(message.destinationId === this.inChannel.channelId) {
-        const user = this.user;
-        const messageData = {
-          name: user.data.name,
-          lastName: user.data.lastName,
-          userName: user.data.userName,
-          content: message.text.content,
-          date_message: new Date().toLocaleDateString()
-        };
-
-        this.channel_messages.push(messageData);
-      }
-    });
-
-    this.$socket.on('sentDirectMessage', (message) => {
-      if(message.destinationId === this.inInbox.id) {
-        const user = this.user;
-        const messageData = {
-          name: user.data.name,
-          lastName: user.data.lastName,
-          userName: user.data.userName,
-          content: message.text.content,
-          date_message: new Date().toLocaleDateString()
-        };
-
-        this.dMessagesContent.push(messageData);
-      }
-    });
+    this.listenSentMessageEvent();
+    this.listenSentDirectMessageEvent();
+    this.listenSentMessageWithMedia();
+    this.listenSentMessageMedia();
   },
   components: {
     ChatNavbar,
@@ -152,8 +128,10 @@ export default {
       channel_list: null,
       channel_messages: [],
       messageText: null,
+      messageMedia: null,
       dMessagesList: null,
       dMessagesContent: [],
+      channel_message_waiting: null,
     }
   },
   methods: {
@@ -164,12 +142,13 @@ export default {
       if(!this.inChannel && !this.inInbox) return;
 
       const destinationId = this.inChannel ? this.inChannel.channelId : this.inInbox.id;
+      const hasMedia = this.messageMedia ? 1 : 0;
       const message = {
         userId: this.user.data.id,
         destinationId: destinationId,
-        hasMedia: 0,
+        hasMedia,
         hasText: 1,
-        media: {},
+        media: this.messageMedia,
         text: {
           content: this.messageText,
         }
@@ -190,6 +169,63 @@ export default {
     },
     setDirectMessagesContent(messages) {
       this.dMessagesContent = messages;
+    },
+    setMedia(e) {
+      this.messageMedia = e.target.files[0];
+    },
+    listenSentMessageEvent() {
+      this.$socket.on('sentMessageToChannel', (message) => {
+        if(message.destinationId === this.inChannel.channelId) {
+          const user = this.user;
+          const messageData = {
+            name: user.data.name,
+            lastName: user.data.lastName,
+            userName: user.data.userName,
+            content: message.text.content,
+            date_message: new Date().toLocaleDateString()
+          };
+
+          this.channel_messages.push(messageData);
+        }
+      });
+    },
+    listenSentDirectMessageEvent() {
+      this.$socket.on('sentDirectMessage', (message) => {
+        if(message.destinationId === this.inInbox.id) {
+          const user = this.user;
+          const messageData = {
+            name: user.data.name,
+            lastName: user.data.lastName,
+            userName: user.data.userName,
+            content: message.text.content,
+            date_message: new Date().toLocaleDateString()
+          };
+
+          this.dMessagesContent.push(messageData);
+        }
+      });
+    },
+    listenSentMessageWithMedia() {
+      this.$socket.on('sentMessageToChannelWithMedia', (message) => {
+        if(message.destinationId === this.inChannel.channelId) {
+          const user = this.user;
+          const messageData = {
+            name: user.data.name,
+            lastName: user.data.lastName,
+            userName: user.data.userName,
+            content: message.text.content,
+            date_message: new Date().toLocaleDateString()
+          };
+
+          this.channel_message_waiting = messageData;
+        }
+      });
+    },
+    listenSentMessageMedia() {
+      this.$socket.on('sentMessageToChannelMedia', (message) => {
+        console.log(message);
+        this.channel_messages.push(this.channel_message_waiting);
+      });
     }
   },
   computed: {

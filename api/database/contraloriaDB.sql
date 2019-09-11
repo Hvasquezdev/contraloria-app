@@ -42,18 +42,19 @@ CREATE TABLE IF NOT EXISTS `channel_message` (
   `hasMedia` int(11) DEFAULT '0' COMMENT '1 to true and 0 to false',
   `hasText` int(11) DEFAULT '1' COMMENT '1 to true and 0 to false',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.channel_message_media
 CREATE TABLE IF NOT EXISTS `channel_message_media` (
-  `id` int(11) NOT NULL,
-  `content` varchar(255) DEFAULT NULL,
-  `type` varchar(50) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mimetype` varchar(255) NOT NULL,
+  `filename` varchar(255) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `size` bigint(20) NOT NULL,
   `channel_message_id` int(11) DEFAULT NULL,
-  `date_message` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.channel_message_text
@@ -63,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `channel_message_text` (
   `channel_message_id` int(11) DEFAULT NULL,
   `date_message` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.message
@@ -86,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `message_content` (
   `authorId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.message_text
@@ -96,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `message_text` (
   `messageContentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- La exportación de datos fue deseleccionada.
 -- Volcando estructura para tabla contraloria-app.rol
