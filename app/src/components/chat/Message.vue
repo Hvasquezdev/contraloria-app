@@ -17,6 +17,19 @@
       <p
         class="text-black leading-normal"
       >{{ messageText }}</p>
+      <div class="media-content" v-if="hasMedia">
+        <span class="media-content-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M4 18h12V6h-4V2H4v16zm-2 1V0h12l4 4v16H2v-1z"/></svg>
+        </span>
+        <div class="media-content-info">
+          <span class="name">name.pdf</span>
+          <span class="size">2 MB</span>
+        </div>
+
+        <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center media-content-download ml-auto">
+          <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -47,6 +60,14 @@ export default {
     messageDate: {
       type: String,
       required: true
+    },
+    hasMedia: {
+      type: Number,
+      default: 0
+    },
+    hasText: {
+      type: Number,
+      default: 0
     }
   },
   filters: {
@@ -58,3 +79,33 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.media-content {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #3636362b;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+.media-content-icon {
+  width: 40px;
+}
+.media-content-icon svg {
+  fill: #073042;
+}
+.media-content-info {
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  justify-content: space-between;
+}
+.media-content-info .name {
+  font-size: 15px;
+  font-weight: bold;
+}
+.media-content-info .size {
+  color: #3636369a;
+}
+</style>

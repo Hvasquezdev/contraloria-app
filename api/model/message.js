@@ -8,10 +8,11 @@ const Message = function(message) {
 };
 
 Message.getAllByChannel = function(channelId, result) {
-  mysqlConnection.query("SELECT name, lastName, userName, content, date_message FROM CHANNEL_message T1 INNER JOIN channel_message_text T2 ON T1.id = T2.channel_message_id INNER JOIN users T3 ON T3.id = T1.userId WHERE T1.destinationId = ?", [channelId], function(err, res) {
+  mysqlConnection.query("SELECT name, lastName, userName, hasText, hasMedia, content, date_message FROM CHANNEL_message T1 INNER JOIN channel_message_text T2 ON T1.id = T2.channel_message_id INNER JOIN users T3 ON T3.id = T1.userId WHERE T1.destinationId = ?", [channelId], function(err, res) {
     if(err) {
       result(err, null);
     } else {
+      console.log(res)
       result(null, res);
     }
   });

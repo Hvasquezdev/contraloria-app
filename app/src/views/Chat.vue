@@ -36,6 +36,8 @@
             :userName="message.userName"
             :messageText="message.content"
             :messageDate="message.date_message"
+            :hasMedia="message.hasMedia"
+            :hasText="message.hasText"
           ></message-component>
         </template>
 
@@ -64,7 +66,7 @@
             </svg>
           </span>
           <input type="file" ref="file" class="hidden" @change="setMedia" />
-          <input type="text" class="w-full px-4 font-dark-blue" placeholder="Escribe tu mensaje" v-model="messageText" @keyup.enter="sendMessage" />
+          <input type="text" class="w-full px-4 font-dark-blue" placeholder="Escribe tu mensaje" v-model.trim="messageText" @keyup.enter="sendMessage" />
         </div>
       </div>
     </div>
@@ -165,7 +167,6 @@ export default {
             this.messageText = null;
           });
       }
-
     },
     setDirectMessagesContent(messages) {
       this.dMessagesContent = messages;
@@ -214,6 +215,8 @@ export default {
             lastName: user.data.lastName,
             userName: user.data.userName,
             content: message.text.content,
+            hasText: message.hasText,
+            hasMedia: message.hasMedia,
             date_message: new Date().toLocaleDateString()
           };
 
@@ -223,7 +226,8 @@ export default {
     },
     listenSentMessageMedia() {
       this.$socket.on('sentMessageToChannelMedia', (message) => {
-        console.log(message);
+        this.messageText = null;
+        this.messageMedia = null;
         this.channel_messages.push(this.channel_message_waiting);
       });
     }
