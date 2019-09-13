@@ -38,6 +38,7 @@
             :messageDate="message.date_message"
             :hasMedia="message.hasMedia"
             :hasText="message.hasText"
+            :channelMessageId="message.id"
           ></message-component>
         </template>
 

@@ -62,4 +62,7 @@ module.exports = function(app, io, upload) {
       console.log(`Storage location is ${req.file.path}`);
       return message.send_message_media_to_channel(req, res, io);
     });
+
+  app.route('/message/media/:channelMessageId')
+    .get(message.get_media_by_channel_message);
 }

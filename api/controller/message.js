@@ -16,6 +16,21 @@ exports.get_all_by_channel = function(req, res) {
   }
 };
 
+exports.get_media_by_channel_message = function(req, res) {
+  const { channelMessageId } = req.params;
+
+  if(!channelMessageId) {
+    res.status(400).send({ error: true, message: 'Please provide the channel message id' });
+  } else {
+    Message.getMediaDataByChannelMessage(channelMessageId, function(err, messageMedia) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(messageMedia);
+      }
+    });
+  }
+}
 
 exports.get_direct_message_data = function(req, res) {
   const { userId, destinationId } = req.params;

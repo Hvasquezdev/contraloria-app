@@ -17,13 +17,13 @@
       <p
         class="text-black leading-normal"
       >{{ messageText }}</p>
-      <div class="media-content" v-if="hasMedia">
+      <div class="media-content" v-if="hasMedia && messageMedia.size">
         <span class="media-content-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M4 18h12V6h-4V2H4v16zm-2 1V0h12l4 4v16H2v-1z"/></svg>
         </span>
         <div class="media-content-info">
-          <span class="name">name.pdf</span>
-          <span class="size">2 MB</span>
+          <span class="name">{{ messageMedia.originalname }}</span>
+          <span class="size">{{ messageMedia.size | bytesToSize }}</span>
         </div>
 
         <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center media-content-download ml-auto">
@@ -54,9 +54,6 @@ export default {
       type: String,
       default: ''
     },
-    messageMedia: {
-      default: null
-    },
     messageDate: {
       type: String,
       required: true
@@ -68,6 +65,10 @@ export default {
     hasText: {
       type: Number,
       default: 0
+    },
+    channelMessageId: {
+      type: Number,
+      required: true,
     }
   },
   filters: {
@@ -75,8 +76,26 @@ export default {
       if (!value) return '';
       value = Date.parse(value);
       return new Date(value).toLocaleDateString();
+    },
+    bytesToSize: function (bytes) {
+      var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      if (bytes == 0) return '0 Byte';
+      var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+      return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     }
-  }
+  },
+  data() {
+    return {
+      messageMedia: {},
+    }
+  },
+  mounted() {
+    if(this.hasMedia) {
+      fetch(`http://localhost:3001/message/media/${this.channelMessageId}`)
+        .then(response => response.json())
+        .then(data => this.messageMedia = data[0]);
+    }
+  },
 }
 </script>
 

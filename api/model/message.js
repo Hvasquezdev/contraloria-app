@@ -8,15 +8,24 @@ const Message = function(message) {
 };
 
 Message.getAllByChannel = function(channelId, result) {
-  mysqlConnection.query("SELECT name, lastName, userName, hasText, hasMedia, content, date_message FROM CHANNEL_message T1 INNER JOIN channel_message_text T2 ON T1.id = T2.channel_message_id INNER JOIN users T3 ON T3.id = T1.userId WHERE T1.destinationId = ?", [channelId], function(err, res) {
+  mysqlConnection.query("SELECT name, lastName, userName, hasText, hasMedia, content, date_message, T1.id FROM CHANNEL_message T1 INNER JOIN channel_message_text T2 ON T1.id = T2.channel_message_id INNER JOIN users T3 ON T3.id = T1.userId WHERE T1.destinationId = ?", [channelId], function(err, res) {
     if(err) {
       result(err, null);
     } else {
-      console.log(res)
       result(null, res);
     }
   });
 };
+
+Message.getMediaDataByChannelMessage = function(channelMessageId, result) {
+  mysqlConnection.query("SELECT filename, originalname, path, size, mimetype FROM channel_message_media WHERE channel_message_id = ?", [channelMessageId], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
 
 Message.getUserDirectMessages = function(userId, result) {
   mysqlConnection.query("SELECT T1.id, name, lastName, userId, destinationId FROM message T1 INNER JOIN users T2 ON T2.id = T1.destinationId WHERE T1.userId = ? OR T1.destinationId = ?", [userId, userId], function(err, res) {
@@ -73,7 +82,8 @@ Message.sendMessageMediaToChannel = function(message, result) {
     filename: message.filename, 
     path: message.path, 
     size: message.size, 
-    channel_message_id: parseInt(message.channel_message_id)
+    channel_message_id: parseInt(message.channel_message_id),
+    originalname: message.originalname
   }
   mysqlConnection.query("INSERT INTO channel_message_media set ?", mediaData, function(err, res) {
     if(err) {
