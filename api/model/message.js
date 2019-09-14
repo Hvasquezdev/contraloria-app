@@ -27,6 +27,16 @@ Message.getMediaDataByChannelMessage = function(channelMessageId, result) {
   })
 }
 
+Message.getDirectMessageMedia = function(messageContentId, result) {
+  mysqlConnection.query("SELECT filename, originalname, path, size, mimetype FROM message_media WHERE messageContentId = ?", [messageContentId], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
+
 Message.getUserDirectMessages = function(userId, result) {
   mysqlConnection.query("SELECT T1.id, name, lastName, userId, destinationId FROM message T1 INNER JOIN users T2 ON T2.id = T1.destinationId WHERE T1.userId = ? OR T1.destinationId = ?", [userId, userId], function(err, res) {
     if(err) {
@@ -38,7 +48,7 @@ Message.getUserDirectMessages = function(userId, result) {
 };
 
 Message.getDirectMessagesData = function(message, result) {
-  mysqlConnection.query("SELECT name, lastName, userName, content, date_message FROM message T1 INNER JOIN message_content T2 ON T2.messageId = T1.id INNER JOIN message_text T3 ON T3.messageContentId = T2.id INNER JOIN users T4 ON T4.id = T2.authorId WHERE T1.userId = ? OR T1.destinationId = ?", [message.userId, message.destinationId], function(err, res) {
+  mysqlConnection.query("SELECT T2.id, name, lastName, userName, content, date_message, hasMedia, hasText FROM message T1 INNER JOIN message_content T2 ON T2.messageId = T1.id INNER JOIN message_text T3 ON T3.messageContentId = T2.id INNER JOIN users T4 ON T4.id = T2.authorId WHERE T1.userId = ? OR T1.destinationId = ?", [message.userId, message.destinationId], function(err, res) {
     if(err) {
       result(err, null);
     } else {
@@ -63,12 +73,13 @@ Message.sendMessageToChannel = function(message, result) {
         content: message.text.content || null,
         channel_message_id: res.insertId
       };
+      const mainResponse = res;
 
       mysqlConnection.query("INSERT INTO channel_message_text set ?", messageTextData, function(err, res) {
         if(err) {
           result(err, null);
         } else {
-          result(null, res);
+          result(null, mainResponse);
         }
       });
     }
@@ -76,7 +87,6 @@ Message.sendMessageToChannel = function(message, result) {
 };
 
 Message.sendMessageMediaToChannel = function(message, result) {
-  console.log(message)
   const mediaData = {
     mimetype: message.mimetype, 
     filename: message.filename, 
@@ -86,6 +96,24 @@ Message.sendMessageMediaToChannel = function(message, result) {
     originalname: message.originalname
   }
   mysqlConnection.query("INSERT INTO channel_message_media set ?", mediaData, function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+}
+
+Message.sendDirectMessageMedia = function(message, result) {
+  const mediaData = {
+    mimetype: message.mimetype, 
+    filename: message.filename, 
+    path: message.path, 
+    size: message.size, 
+    messageContentId: parseInt(message.messageContentId),
+    originalname: message.originalname
+  }
+  mysqlConnection.query("INSERT INTO message_media set ?", mediaData, function(err, res) {
     if(err) {
       result(err, null);
     } else {
@@ -110,50 +138,15 @@ Message.sendDirectMessage = function(message, result) {
         content: message.text.content || null,
         messageContentId: res.insertId
       };
+      const mainResponse = res;
     
-      // const messageMediaData = {
-      //   content: message.media.content || null,
-      //   type: message.media.type || null,
-      //   channel_message_id: res.insertId
-      // };
-
-      if(messageData.hasText && messageData.hasMedia) {
-
-        mysqlConnection.query("INSERT INTO channel_message_text set ?", messageTextData, function(err, res) {
-          if(err) {
-            result(err, null);
-          } else {
-            // mysqlConnection.query("INSERT INTO channel_message_media set ?", messageMediaData, function(err, res) {
-            //   if(err) {
-            //     result(err, null);
-            //   } else {
-            //     result(null, res);
-            //   }
-            // });
-          }
-        });
-
-      } else if(messageData.hasText && !messageData.hasMedia) {
-
-        mysqlConnection.query("INSERT INTO message_text set ?", messageTextData, function(err, res) {
-          if(err) {
-            result(err, null);
-          } else {
-            result(null, res);
-          }
-        });
-
-      } else {
-
-        // mysqlConnection.query("INSERT INTO channel_message_media set ?", messageMediaData, function(err, res) {
-        //   if(err) {
-        //     result(err, null);
-        //   } else {
-        //     result(null, res);
-        //   }
-        // });
-
-      }
+      mysqlConnection.query("INSERT INTO message_text set ?", messageTextData, function(err, res) {
+        if(err) {
+          result(err, null);
+        } else {
+          result(null, mainResponse);
+        }
+      });
     }
   });
 };

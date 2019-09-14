@@ -39,6 +39,7 @@
             :hasMedia="message.hasMedia"
             :hasText="message.hasText"
             :channelMessageId="message.id"
+            messageType="channel"
           ></message-component>
         </template>
 
@@ -48,7 +49,11 @@
             :fullName="`${message.name} ${message.lastName}`"
             :userName="message.userName"
             :messageText="message.content"
+            :hasMedia="message.hasMedia"
+            :hasText="message.hasText"
             :messageDate="message.date_message"
+            :messageContentId="message.id"
+            messageType="inbox"
           ></message-component>
         </template>
       </div>
@@ -112,9 +117,11 @@ export default {
       });
 
     this.listenSentMessageEvent();
-    this.listenSentDirectMessageEvent();
     this.listenSentMessageWithMedia();
     this.listenSentMessageMedia();
+    this.listenSentDirectMessageEvent();
+    this.listenSentDirectMessageWithMedia();
+    this.listenSentDirectMessageMedia();
   },
   components: {
     ChatNavbar,
@@ -135,6 +142,7 @@ export default {
       dMessagesList: null,
       dMessagesContent: [],
       channel_message_waiting: null,
+      direct_message_waiting: null,
     }
   },
   methods: {
@@ -179,31 +187,9 @@ export default {
       this.$socket.on('sentMessageToChannel', (message) => {
         if(message.destinationId === this.inChannel.channelId) {
           const user = this.user;
-          const messageData = {
-            name: user.data.name,
-            lastName: user.data.lastName,
-            userName: user.data.userName,
-            content: message.text.content,
-            date_message: new Date().toLocaleDateString()
-          };
+          const messageData = this.setMessageData(user, message);
 
           this.channel_messages.push(messageData);
-        }
-      });
-    },
-    listenSentDirectMessageEvent() {
-      this.$socket.on('sentDirectMessage', (message) => {
-        if(message.destinationId === this.inInbox.id) {
-          const user = this.user;
-          const messageData = {
-            name: user.data.name,
-            lastName: user.data.lastName,
-            userName: user.data.userName,
-            content: message.text.content,
-            date_message: new Date().toLocaleDateString()
-          };
-
-          this.dMessagesContent.push(messageData);
         }
       });
     },
@@ -211,26 +197,58 @@ export default {
       this.$socket.on('sentMessageToChannelWithMedia', (message) => {
         if(message.destinationId === this.inChannel.channelId) {
           const user = this.user;
-          const messageData = {
-            name: user.data.name,
-            lastName: user.data.lastName,
-            userName: user.data.userName,
-            content: message.text.content,
-            hasText: message.hasText,
-            hasMedia: message.hasMedia,
-            date_message: new Date().toLocaleDateString()
-          };
+          console.log(message);
+          const messageData = this.setMessageData(user, message);
 
           this.channel_message_waiting = messageData;
         }
       });
     },
     listenSentMessageMedia() {
-      this.$socket.on('sentMessageToChannelMedia', (message) => {
+      this.$socket.on('sentMessageToChannelMedia', () => {
         this.messageText = null;
         this.messageMedia = null;
         this.channel_messages.push(this.channel_message_waiting);
       });
+    },
+    listenSentDirectMessageEvent() {
+      this.$socket.on('sentDirectMessage', (message) => {
+        if(message.destinationId === this.inInbox.id) {
+          const user = this.user;
+          const messageData = this.setMessageData(user, message);
+
+          this.dMessagesContent.push(messageData);
+        }
+      });
+    },
+    listenSentDirectMessageWithMedia() {
+      this.$socket.on('sentDirectMessageWithMedia', (message) => {
+        if(message.destinationId === this.inInbox.id) {
+          const user = this.user;
+          const messageData = this.setMessageData(user, message);
+
+          this.direct_message_waiting = messageData;
+        }
+      });
+    },
+    listenSentDirectMessageMedia() {
+      this.$socket.on('sentDirectMessageMedia', () => {
+        this.messageText = null;
+        this.messageMedia = null;
+        this.dMessagesContent.push(this.direct_message_waiting);
+      });
+    },
+    setMessageData(user, message) {
+      return {
+        id: message.insertId,
+        name: user.data.name,
+        lastName: user.data.lastName,
+        userName: user.data.userName,
+        content: message.text.content,
+        hasText: message.hasText,
+        hasMedia: message.hasMedia,
+        date_message: new Date().toLocaleDateString()
+      };
     }
   },
   computed: {
@@ -254,9 +272,6 @@ export default {
 </script>
 
 <style>
-.message-container {
-  border-bottom: 1px solid #3636362b;
-}
 .border-dark-blue {
   border-color: #073042;
 }

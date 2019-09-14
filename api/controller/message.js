@@ -32,6 +32,22 @@ exports.get_media_by_channel_message = function(req, res) {
   }
 }
 
+exports.get_media_by_direct_message = function(req, res) {
+  const { messageContentId } = req.params;
+
+  if(!messageContentId) {
+    res.status(400).send({ error: true, message: 'Please provide the message content id' });
+  } else {
+    Message.getDirectMessageMedia(messageContentId, function(err, messageMedia) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(messageMedia);
+      }
+    });
+  }
+}
+
 exports.get_direct_message_data = function(req, res) {
   const { userId, destinationId } = req.params;
 
@@ -76,10 +92,14 @@ exports.send_message_to_channel = function(req, res, io) {
       if(err) {
         res.send(err);
       } else {
+        const messageToEmit = {
+          ...newMessage,
+          insertId: message.insertId
+        }
         if(!newMessage.hasMedia) {
-          io.sockets.emit('sentMessageToChannel', newMessage);
+          io.sockets.emit('sentMessageToChannel', messageToEmit);
         } else {
-          io.sockets.emit('sentMessageToChannelWithMedia', newMessage);
+          io.sockets.emit('sentMessageToChannelWithMedia', messageToEmit);
         }
         res.status(200).send({ error: false, message: 'Message sent correctly', message });
       }
@@ -106,6 +126,25 @@ exports.send_message_media_to_channel = function(req, res, io) {
   }
 };
 
+exports.send_direct_message_media = function(req, res, io) {
+  const mediaData = { ...req.file, ...req.body };
+  console.log('Controller sending direct message media');
+
+  if(!mediaData.filename) {
+    res.status(400).send({ error: true, message: 'Please provide the file' });
+  } else {
+
+    Message.sendDirectMessageMedia(mediaData, function(err, message) {
+      if(err) {
+        res.send(err);
+      } else {
+        io.sockets.emit('sentDirectMessageMedia', mediaData);
+        res.status(200).send({ error: false, message: 'Direct message media saved correctly', message });
+      }
+    });
+  }
+};
+
 exports.send_direct_message = function(req, res, io) {
   const newMessage = req.body;
   console.log('Controller sending direct message');
@@ -118,7 +157,15 @@ exports.send_direct_message = function(req, res, io) {
       if(err) {
         res.send(err);
       } else {
-        io.sockets.emit('sentDirectMessage', newMessage);
+        const messageToEmit = {
+          ...newMessage,
+          insertId: message.insertId
+        }
+        if(!newMessage.hasMedia) {
+          io.sockets.emit('sentDirectMessage', messageToEmit);
+        } else {
+          io.sockets.emit('sentDirectMessageWithMedia', messageToEmit);
+        }
         res.status(200).send({ error: false, message: 'Message sent correctly', message });
       }
     });

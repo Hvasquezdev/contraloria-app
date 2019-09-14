@@ -43,11 +43,9 @@ function sendMessageToChannel(message) {
     body: JSON.stringify(message),
   };
 
-  return fetch('http://localhost:3001/message', requestOptions).then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      if(message.hasMedia) {
-        console.log('enviando media')
+  if(message.hasMedia) {
+    return fetch('http://localhost:3001/message', requestOptions).then((response) => response.json())
+      .then((data) => {
         let formData  = new FormData();
     
         formData.append('file', message.media);
@@ -59,10 +57,10 @@ function sendMessageToChannel(message) {
         };
     
         return fetch('http://localhost:3001/message/media', requestMediaOptions).then(handleResponse);
-      } else {
-        return handleResponse(data);
-      }
-    });
+      });
+  } else {
+    return fetch('http://localhost:3001/message', requestOptions).then(handleResponse);
+  }
 }
 
 function sendDirectMessage(message) {
@@ -72,7 +70,26 @@ function sendDirectMessage(message) {
     body: JSON.stringify(message),
   };
 
-  return fetch('http://localhost:3001/inbox', requestOptions).then(handleResponse);
+  if(message.hasMedia) {
+    return fetch('http://localhost:3001/inbox', requestOptions).then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        let formData  = new FormData();
+    
+        formData.append('file', message.media);
+        formData.append('messageContentId', parseInt(data.message.insertId));
+    
+        const requestMediaOptions = {
+          method: 'POST',
+          body: formData,
+        };
+    
+        return fetch('http://localhost:3001/inbox/media', requestMediaOptions).then(handleResponse);
+      });
+  } else {
+    return fetch('http://localhost:3001/inbox', requestOptions).then(handleResponse);
+  }
+
 }
 
 function handleResponse(response) {

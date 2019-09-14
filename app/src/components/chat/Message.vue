@@ -68,6 +68,12 @@ export default {
     },
     channelMessageId: {
       type: Number,
+    },
+    messageContentId: {
+      type: Number,
+    },
+    messageType: {
+      type: String,
       required: true,
     }
   },
@@ -90,8 +96,12 @@ export default {
     }
   },
   mounted() {
-    if(this.hasMedia) {
+    if(this.hasMedia && this.messageType === 'channel') {
       fetch(`http://localhost:3001/message/media/${this.channelMessageId}`)
+        .then(response => response.json())
+        .then(data => this.messageMedia = data[0]);
+    } else if(this.hasMedia && this.messageType === 'inbox') {
+      fetch(`http://localhost:3001/inbox/files/media/${this.messageContentId}`)
         .then(response => response.json())
         .then(data => this.messageMedia = data[0]);
     }

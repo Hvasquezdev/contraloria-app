@@ -52,6 +52,15 @@ module.exports = function(app, io, upload) {
   app.route('/inbox/:userId/:destinationId')
     .get(message.get_direct_message_data);
 
+  app.route('/inbox/media')
+    .post(upload.single('file'), function(req, res) {
+      console.log(`Storage location is ${req.file.path}`);
+      return message.send_direct_message_media(req, res, io);
+    });
+
+  app.route('/inbox/files/media/:messageContentId')
+    .get(message.get_media_by_direct_message);
+
   app.route('/message')
     .post(function(req, res) {
       return message.send_message_to_channel(req, res, io);
