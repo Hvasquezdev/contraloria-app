@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     callback(null, './api/uploaded');
   },
   filename: (req, file, callback) => {
-    callback(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
+    callback(null, file.originalname)
   }
 });
 
@@ -42,4 +42,5 @@ io.on('connection', () =>{
 
 // Routes
 const routes = require('./api/routes');
-routes(app, io, upload);
+const dirPath = __dirname;
+routes(app, io, upload, dirPath);

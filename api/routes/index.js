@@ -1,4 +1,4 @@
-module.exports = function(app, io, upload) {
+module.exports = function(app, io, upload, dirPath) {
   const users = require('../controller');
   const channel = require('../controller/channel');
   const message = require('../controller/message');
@@ -74,4 +74,11 @@ module.exports = function(app, io, upload) {
 
   app.route('/message/media/:channelMessageId')
     .get(message.get_media_by_channel_message);
+
+  app.route('/downloadFile/:filename')
+    .get(function(req, res) {
+      const { filename } = req.params;
+      const fullPath = `${dirPath}/api/uploaded/${filename}`;
+      res.download(fullPath, filename);
+    });
 }
