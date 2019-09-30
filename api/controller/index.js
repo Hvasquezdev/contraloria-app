@@ -90,3 +90,38 @@ exports.get_by_username = function(req, res) {
     });
   }
 }
+
+exports.edit_user = function(req, res) {
+  const { userName } = req.params;
+  const { name, lastName } = req.body;
+
+  if(!name && !lastName) {
+    res.status(400).send({ error: true, message: 'There are no changes' });
+  } else {
+    if(name && !lastName) {
+      User.editUserFirstName({ name, userName }, function(err, user) {
+        if(err) {
+          res.send(err);
+        } else {
+          res.json(user);
+        }
+      });
+    } else if (!name && lastName) {
+      User.editUserLastName({ lastName, userName }, function(err, user) {
+        if(err) {
+          res.send(err);
+        } else {
+          res.json(user);
+        }
+      });
+    } else if (name && lastName) {
+      User.editUser({ name, lastName, userName }, function(err, user) {
+        if(err) {
+          res.send(err);
+        } else {
+          res.json(user);
+        }
+      });
+    }
+  }
+}

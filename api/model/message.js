@@ -7,8 +7,11 @@ const Message = function(message) {
   this.hasText = message.hasText;
 };
 
-Message.getAllByChannel = function(channelId, result) {
-  mysqlConnection.query("SELECT name, lastName, userName, hasText, hasMedia, content, date_message, T1.id FROM CHANNEL_message T1 INNER JOIN channel_message_text T2 ON T1.id = T2.channel_message_id INNER JOIN users T3 ON T3.id = T1.userId WHERE T1.destinationId = ?", [channelId], function(err, res) {
+Message.getAllByChannel = function(data, result) {
+  const { channelId, page } = data;
+  console.log(page)
+  const query = `SELECT name, lastName, userName, hasText, hasMedia, content, date_message, T1.id FROM CHANNEL_message T1 INNER JOIN channel_message_text T2 ON T1.id = T2.channel_message_id INNER JOIN users T3 ON T3.id = T1.userId WHERE T1.destinationId = ? ORDER BY date_message DESC LIMIT ${page},10`;
+  mysqlConnection.query(query, [channelId], function(err, res) {
     if(err) {
       result(err, null);
     } else {

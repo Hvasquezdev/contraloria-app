@@ -8,13 +8,13 @@ export const messageService = {
   sendDirectMessage
 };
 
-function getAllByChannel(channelId) {
+function getAllByChannel(channelId, page) {
   const requestOptions = {
     method: 'GET',
     headers: authHeader()
   };
 
-  return fetch(`http://localhost:3001/messages/${channelId}`, requestOptions).then(handleResponse);
+  return fetch(`http://localhost:3001/messages/${channelId}/${page}`, requestOptions).then(handleResponse);
 }
 
 function getByUserId(userId) {

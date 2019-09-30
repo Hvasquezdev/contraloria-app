@@ -8,6 +8,7 @@ const state = {
     fetchingDirectMessages: false,
     fetchingDirectMessagesContent: false
   },
+  currentPage: 0,
   channelMessages: []
 }
 
@@ -78,14 +79,23 @@ const mutations = {
 
   addMessageToArray(state, message) {
     state.channelMessages.push(message);
+  },
+
+  setCurrentPage(state, value) {
+    state.currentPage += value;
+  },
+
+  resetCurrentPage(state) {
+    state.currentPage = 0;
   }
 };
 
 const actions = { // TODO: get message author data, check if the message has media and get the media, add send message function
-  getMessagesByChannel({ commit }, channelId) {
+  getMessagesByChannel({ commit }, data) {
     commit('getMessagesRequest');
-
-    return messageService.getAllByChannel(channelId)
+    const { channelId, page } = data;
+    console.log(channelId, page);
+    return messageService.getAllByChannel(channelId, page)
       .then((messages) => {
         commit('getMessagesSuccess');
         return messages;

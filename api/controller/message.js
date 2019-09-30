@@ -1,12 +1,12 @@
 const { Message } = require('../model/message');
 
 exports.get_all_by_channel = function(req, res) {
-  const { channelId } = req.params;
+  const { channelId, page } = req.params;
 
   if (!channelId) {
     res.status(400).send({ error: true, message: 'Please provide the channel id' });
   } else {
-    Message.getAllByChannel(channelId, function(err, messageData) {
+    Message.getAllByChannel({ channelId, page }, function(err, messageData) {
       if(err) {
         res.send(err);
       } else {

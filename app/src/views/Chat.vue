@@ -19,6 +19,9 @@
     <!-- Dialog / Search Channel -->
     <search-channel-dialog v-if="showSearchChannelDialog"></search-channel-dialog>
 
+    <!-- Dialog / Edit user info -->
+    <edit-user-dialog v-if="showEditUserDialog"></edit-user-dialog>
+
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
 
@@ -26,12 +29,20 @@
       <chat-navbar></chat-navbar>
 
       <!-- Chat messages -->
-      <div class="px-6 py-4 flex-1 overflow-y-scroll">
+      <div class="px-6 py-4 flex-1 overflow-y-scroll chat-messages--container flex flex-col">
+
+      <button
+        v-if="channel_messages.length > 0"
+        class="bg-transparent hover:bg-blue-500 text-blue-700 ml-auto mr-auto mb-4 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+        @click="loadMoreMessages"
+      >
+        Cargar mas mensajes
+      </button>
 
         <!-- A message -->
         <template v-if="channel_messages.length > 0">
           <message-component
-            v-for="(message, index) in channel_messages" :key="index"
+            v-for="message in channel_messages" :key="message.id"
             :fullName="`${message.name} ${message.lastName}`"
             :userName="message.userName"
             :messageText="message.content"
@@ -89,6 +100,7 @@ const NewChannelDialog = () => import('@/components/dialogs/NewChannelDialog.vue
 const MessageComponent = () => import('@/components/chat/Message.vue');
 const AddMemberDialog = () => import('@/components/dialogs/AddMemberDialog.vue');
 const SearchChannelDialog = () => import('@/components/dialogs/SearchChannelDialog.vue');
+const EditUserDialog = () => import('@/components/dialogs/EditUserDialog.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -130,7 +142,8 @@ export default {
     NewChannelDialog,
     AddMemberDialog,
     MessageComponent,
-    SearchChannelDialog
+    SearchChannelDialog,
+    EditUserDialog
   },
   data() {
     return {
@@ -147,7 +160,7 @@ export default {
   },
   methods: {
     setChannelMessages(messages) {
-      this.channel_messages = messages;
+      this.channel_messages = messages.reverse();
     },
     sendMessage() {
       if(!this.inChannel && !this.inInbox) return;
@@ -182,6 +195,18 @@ export default {
     },
     setMedia(e) {
       this.messageMedia = e.target.files[0];
+    },
+    loadMoreMessages() {
+      this.$store.commit('message/setCurrentPage', 10);
+      
+      const currentPage = this.$store.state.message.currentPage;
+      this.$store.dispatch('message/getMessagesByChannel', { channelId: this.inChannel.channelId, page: currentPage })
+        .then((messages) => {
+          const channelMessages = this.channel_messages;
+          const newMessagesList = [...messages, ...channelMessages];
+          this.channel_messages = newMessagesList;
+        })
+        .catch((error) => console.log(error))
     },
     listenSentMessageEvent() {
       this.$socket.on('sentMessageToChannel', (message) => {
@@ -260,6 +285,9 @@ export default {
     },
     showSearchChannelDialog() {
       return this.$store.state.dialogs.isOpen.searchChannel;
+    },
+    showEditUserDialog() {
+      return this.$store.state.dialogs.isOpen.editUser;
     },
     inChannel() {
       return this.$store.state.channel.inChannel;

@@ -8,7 +8,8 @@ export const userService = {
   getById,
   getByUserName,
   update,
-  delete: _delete
+  delete: _delete,
+  editUser
 };
 
 function login(userName, password) {
@@ -42,6 +43,17 @@ function register(user) {
   };
 
   return fetch('http://localhost:3001/users', requestOptions).then(handleResponse);
+}
+
+function editUser(user) {
+  const { userName, name, lastName } = user;
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, lastName }),
+  };
+
+  return fetch(`http://localhost:3001/user/${userName}`, requestOptions).then(handleResponse);
 }
 
 function getAll() {

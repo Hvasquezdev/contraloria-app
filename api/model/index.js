@@ -107,6 +107,42 @@ User.getByUserName = function(userName, result) {
   });
 };
 
+User.editUserFirstName = function(data, result) {
+  const { name, userName } = data;
+  mysqlConnection.query("UPDATE users SET name = ? WHERE userName = ?", [name, userName], function(err, res) {
+    if(err) {
+      console.log('error: ', err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+}
+
+User.editUserLastName = function(data, result) {
+  const { lastName, userName } = data;
+  mysqlConnection.query("UPDATE users SET lastName = ? WHERE userName = ?", [lastName, userName], function(err, res) {
+    if(err) {
+      console.log('error: ', err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+}
+
+User.editUser = function(data, result) {
+  const { name, lastName, userName } = data;
+  mysqlConnection.query("UPDATE users SET name = ?, lastName = ? WHERE userName = ?", [name, lastName, userName], function(err, res) {
+    if(err) {
+      console.log('error: ', err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+}
+
 Rol.newRol = function(data, result) {
   mysqlConnection.query("INSERT INTO rol set ?", [data], function(err, res) {
     if(err) {

@@ -7,14 +7,23 @@
           <span class="text-white opacity-50 text-sm">@{{ user.data.userName }}</span>
         </div>
       </div>
-      <div>
+      <div class="flex flex-col h-full">
         <svg
-          class="fill-current h-6 w-6 opacity-50 cursor-pointer"
+          class="fill-current h-5 w-5 opacity-50 cursor-pointer mb-3"
           @click="logOut"
           xmlns="http://www.w3.org/2000/svg" 
           viewBox="0 0 20 20"
         >
           <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM11.4 10l2.83-2.83-1.41-1.41L10 8.59 7.17 5.76 5.76 7.17 8.59 10l-2.83 2.83 1.41 1.41L10 11.41l2.83 2.83 1.41-1.41L11.41 10z"/>
+        </svg>
+
+        <svg
+          class="fill-current h-5 w-5 opacity-50 cursor-pointer"
+          @click="openEditUserDialog"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path d="M3.94 6.5L2.22 3.64l1.42-1.42L6.5 3.94c.52-.3 1.1-.54 1.7-.7L9 0h2l.8 3.24c.6.16 1.18.4 1.7.7l2.86-1.72 1.42 1.42-1.72 2.86c.3.52.54 1.1.7 1.7L20 9v2l-3.24.8c-.16.6-.4 1.18-.7 1.7l1.72 2.86-1.42 1.42-2.86-1.72c-.52.3-1.1.54-1.7.7L11 20H9l-.8-3.24c-.6-.16-1.18-.4-1.7-.7l-2.86 1.72-1.42-1.42 1.72-2.86c-.3-.52-.54-1.1-.7-1.7L0 11V9l3.24-.8c.16-.6.4-1.18.7-1.7zM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
         </svg>
       </div>
     </div>
@@ -168,11 +177,16 @@ export default {
     openNewChannelDialog() {
       this.$store.dispatch('dialogs/toggleNewChannelDialog', true);
     },
+    openEditUserDialog() {
+      this.$store.dispatch('dialogs/toggleEditUserDialog', true);
+    },
     prueba() {
       this.privateChannels.push({ channel_data: [ {name: 'asdasd'} ] })
     },
     setSelectedChannel(channel) {
       if(this.inChannel && channel.channelId === this.inChannel.channelId) return;
+
+      this.$store.commit('message/resetCurrentPage');
 
       if(this.inInbox) {
         this.$store.dispatch('channel/setSelectedInbox', null);
@@ -200,9 +214,9 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    getChannelMessages(channelId) {
+    getChannelMessages(channelId, page = 0) {
       this.channelMessage = [];
-      this.$store.dispatch('message/getMessagesByChannel', channelId)
+      this.$store.dispatch('message/getMessagesByChannel', { channelId, page })
         .then(messages => {
           this.$emit('setChannelMessages', messages);
         })

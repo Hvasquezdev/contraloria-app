@@ -89,6 +89,16 @@ const actions = {
         commit('registerFailure', error);
         dispatch('alert/error', error, { root: true });
       });
+  },
+
+  editUser(context, user) {
+    return userService.editUser(user)
+      .then((user) => {
+        return user;
+      })
+      .catch((error) => {
+        throw error;
+      });
   }
 };
 

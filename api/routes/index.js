@@ -8,7 +8,8 @@ module.exports = function(app, io, upload, dirPath) {
     .post(users.new_user);
 
   app.route('/user/:userName')
-    .get(users.get_by_username);
+    .get(users.get_by_username)
+    .put(users.edit_user);
 
   app.route('/user/authenticate')
     .post(users.auth_user);
@@ -38,7 +39,7 @@ module.exports = function(app, io, upload, dirPath) {
     .get(channel.get_by_name);
 
   // Messages Routes
-  app.route('/messages/:channelId')
+  app.route('/messages/:channelId/:page')
     .get(message.get_all_by_channel);
 
   app.route('/inbox')
