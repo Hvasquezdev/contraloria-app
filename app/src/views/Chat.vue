@@ -5,8 +5,10 @@
       :user="user" 
       :channels="channel_list" 
       :directMessages="dMessagesList"
+      :showSidebar="showSidebar"
       @setChannelMessages="setChannelMessages"
       @setDirectMessagesContent="setDirectMessagesContent"
+      @close-sidebar="closeSidebar"
       v-if="channel_list && user"
     ></chat-sidebar>
 
@@ -26,7 +28,9 @@
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
 
       <!-- Top bar -->
-      <chat-navbar></chat-navbar>
+      <chat-navbar
+        @open-sidebar="openSidebar"
+      ></chat-navbar>
 
       <!-- Chat messages -->
       <div class="px-6 py-4 flex-1 overflow-y-scroll chat-messages--container flex flex-col">
@@ -156,6 +160,7 @@ export default {
       dMessagesContent: [],
       channel_message_waiting: null,
       direct_message_waiting: null,
+      showSidebar: false,
     }
   },
   methods: {
@@ -274,6 +279,12 @@ export default {
         hasMedia: message.hasMedia,
         date_message: new Date().toLocaleDateString()
       };
+    },
+    openSidebar() {
+      this.showSidebar = true;
+    },
+    closeSidebar() {
+      this.showSidebar = false;
     }
   },
   computed: {

@@ -12,6 +12,7 @@
     "core-js": "^2.6.5",
     "particles.js": "^2.0.0",
     "tailwindcss": "^1.0.5",
+    "v-click-outside": "^2.1.4",
     "vue": "^2.6.10",
     "vue-router": "^3.0.7",
     "vue-socket-io": "^0.3.2",
