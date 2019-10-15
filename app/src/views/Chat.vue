@@ -24,6 +24,9 @@
     <!-- Dialog / Edit user info -->
     <edit-user-dialog v-if="showEditUserDialog"></edit-user-dialog>
 
+    <!-- Dialog / Search user -->
+    <search-user-dialog v-if="showSearchUserDialog"></search-user-dialog>
+
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
 
@@ -105,6 +108,7 @@ const MessageComponent = () => import('@/components/chat/Message.vue');
 const AddMemberDialog = () => import('@/components/dialogs/AddMemberDialog.vue');
 const SearchChannelDialog = () => import('@/components/dialogs/SearchChannelDialog.vue');
 const EditUserDialog = () => import('@/components/dialogs/EditUserDialog.vue');
+const searchUserDialog = () => import('@/components/dialogs/SearchUserDialog.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -147,7 +151,8 @@ export default {
     AddMemberDialog,
     MessageComponent,
     SearchChannelDialog,
-    EditUserDialog
+    EditUserDialog,
+    searchUserDialog
   },
   data() {
     return {
@@ -299,6 +304,9 @@ export default {
     },
     showEditUserDialog() {
       return this.$store.state.dialogs.isOpen.editUser;
+    },
+    showSearchUserDialog() {
+      return this.$store.state.dialogs.isOpen.searchUser;
     },
     inChannel() {
       return this.$store.state.channel.inChannel;

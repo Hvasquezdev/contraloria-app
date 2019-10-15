@@ -28,3 +28,10 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.modal-container {
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,.16);
+}
+</style>

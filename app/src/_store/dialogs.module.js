@@ -3,7 +3,8 @@ const state = {
     newChannel: false,
     newChannelMember: false,
     searchChannel: false,
-    editUser: false
+    editUser: false,
+    searchUser: false
   }
 };
 
@@ -19,6 +20,9 @@ const mutations = {
   },
   toggleEditUserDialog(state, value) {
     state.isOpen.editUser = value;
+  },
+  toggleSearchUserDialog(state, value) {
+    state.isOpen.searchUser = value;
   }
 };
 
@@ -34,6 +38,9 @@ const actions = {
   },
   toggleEditUserDialog({ commit }, value) {
     commit('toggleEditUserDialog', value);
+  },
+  toggleSearchUserDialog({ commit }, value) {
+    commit('toggleSearchUserDialog', value);
   }
 };
 

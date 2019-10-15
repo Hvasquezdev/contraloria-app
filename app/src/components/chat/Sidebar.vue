@@ -106,7 +106,10 @@
       <div class="mb-8">
         <div class="px-4 mb-2 text-white flex justify-between items-center">
           <div class="opacity-75">Mensajes directos</div>
-          <div class="add-channel-btn">
+          <div
+            class="add-channel-btn"
+            @click="openSearchUserDialog"
+          >
             <svg
               class="fill-current h-4 w-4 opacity-50"
               xmlns="http://www.w3.org/2000/svg"
@@ -195,6 +198,9 @@ export default {
     },
     openEditUserDialog() {
       this.$store.dispatch("dialogs/toggleEditUserDialog", true);
+    },
+    openSearchUserDialog() {
+      this.$store.dispatch("dialogs/toggleSearchUserDialog", true);
     },
     prueba() {
       this.privateChannels.push({ channel_data: [{ name: "asdasd" }] });
