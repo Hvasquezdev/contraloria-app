@@ -47,10 +47,15 @@ module.exports = function(app, io, upload, dirPath) {
       return message.send_direct_message(req, res, io);
     });
 
+  app.route('/inbox/new')
+    .post(function(req, res) {
+      return message.start_direct_message(req, res, io);
+    });
+
   app.route('/inbox/:userId')
     .get(message.get_user_messages);
 
-  app.route('/inbox/:userId/:destinationId')
+  app.route('/inbox/content/:id')
     .get(message.get_direct_message_data);
 
   app.route('/inbox/media')

@@ -51,7 +51,7 @@ Message.getUserDirectMessages = function(userId, result) {
 };
 
 Message.getDirectMessagesData = function(message, result) {
-  mysqlConnection.query("SELECT T2.id, name, lastName, userName, content, date_message, hasMedia, hasText FROM message T1 INNER JOIN message_content T2 ON T2.messageId = T1.id INNER JOIN message_text T3 ON T3.messageContentId = T2.id INNER JOIN users T4 ON T4.id = T2.authorId WHERE T1.userId = ? OR T1.destinationId = ?", [message.userId, message.destinationId], function(err, res) {
+  mysqlConnection.query("SELECT T2.id, name, lastName, userName, content, date_message, hasMedia, hasText FROM message T1 INNER JOIN message_content T2 ON T2.messageId = T1.id INNER JOIN message_text T3 ON T3.messageContentId = T2.id INNER JOIN users T4 ON T4.id = T2.authorId WHERE T1.id = ?", [message.id], function(err, res) {
     if(err) {
       result(err, null);
     } else {
@@ -153,6 +153,21 @@ Message.sendDirectMessage = function(message, result) {
     }
   });
 };
+
+Message.startDirectMessage = function(data, result) {
+  const messageData = { 
+    userId: data.author,
+    destinationId: data.destinationId
+  };
+
+  mysqlConnection.query("INSERT INTO message set ?", messageData, function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
 
 module.exports = {
   Message

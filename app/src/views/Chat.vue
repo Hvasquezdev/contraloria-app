@@ -25,7 +25,11 @@
     <edit-user-dialog v-if="showEditUserDialog"></edit-user-dialog>
 
     <!-- Dialog / Search user -->
-    <search-user-dialog v-if="showSearchUserDialog"></search-user-dialog>
+    <search-user-dialog
+      v-if="showSearchUserDialog"
+      :messages-list="dMessagesList"
+      :user="user"
+    ></search-user-dialog>
 
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
@@ -172,7 +176,7 @@ export default {
     setChannelMessages(messages) {
       this.channel_messages = messages.reverse();
     },
-    sendMessage() {
+    sendMessage(messageFromModal) {
       if(!this.inChannel && !this.inInbox) return;
 
       const destinationId = this.inChannel ? this.inChannel.channelId : this.inInbox.id;
@@ -184,7 +188,7 @@ export default {
         hasText: 1,
         media: this.messageMedia,
         text: {
-          content: this.messageText,
+          content: this.messageText || messageFromModal,
         }
       };
 

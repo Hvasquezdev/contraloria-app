@@ -49,12 +49,12 @@ exports.get_media_by_direct_message = function(req, res) {
 }
 
 exports.get_direct_message_data = function(req, res) {
-  const { userId, destinationId } = req.params;
+  const { id } = req.params;
 
-  if (!userId || !destinationId) {
-    res.status(400).send({ error: true, message: 'Please provide the user id and destination id' });
+  if (!id) {
+    res.status(400).send({ error: true, message: 'Please provide the inbox id' });
   } else {
-    Message.getDirectMessagesData({ userId, destinationId }, function(err, message) {
+    Message.getDirectMessagesData({ id }, function(err, message) {
       if(err) {
         res.send(err);
       } else {
@@ -167,6 +167,25 @@ exports.send_direct_message = function(req, res, io) {
           io.sockets.emit('sentDirectMessageWithMedia', messageToEmit);
         }
         res.status(200).send({ error: false, message: 'Message sent correctly', message });
+      }
+    });
+  }
+}
+
+exports.start_direct_message = function(req, res, io) {
+  const data = req.body;
+  console.log('Controller starting direct message', data);
+
+  if(!data.author || !data.destinationId) {
+    res.status(400).send({ error: true, message: 'Please provide the author and destination id' });
+  } else {
+
+    Message.startDirectMessage(data, function(err, response) {
+      if(err) {
+        res.send(err);
+      } else {
+        io.sockets.emit('startedInbox', { ...data, id: response.insertId });
+        res.status(200).send({ error: false, message: 'Message started correctly', response });
       }
     });
   }

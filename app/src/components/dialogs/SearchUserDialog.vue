@@ -41,24 +41,30 @@
       </div>
     </div>
 
+    <!-- <div
+      class="flex flex-wrap -mx-3 mb-4 mt-4"
+      v-if="foundUserData && !searchingUser"
+    >
+      <div class="w-full px-3">
+        <label class="block tracking-wide text-gray-700 text-xs font-semibold uppercase mb-2 text-left" for="channelName">
+          Escribe un mensaje para inciar una conversación
+        </label>
+        <input 
+          class="shadow appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+          id="message" 
+          type="text" 
+          placeholder="Mensaje"
+          v-model.trim="message"
+          :disabled="searchingUser"
+          @keyup.enter="startChat"
+        >
+      </div>
+    </div> -->
+
     <div class="w-full mb-4 mt-6" v-if="!foundUserData && !searchingUser && searchedUsername && !memberInChannel && !userAdded">
       <div class="flex items-center capitalize text-gray-700 found-user__text font-normal">
         No se encontró: <strong class="font-bold mr-2 ml-1 capitalize">{{ searchedUsername }}</strong> 
         <cross-icon></cross-icon>
-      </div>
-    </div>
-
-    <div class="w-full mb-4 mt-6" v-if="memberInChannel && !userAdded">
-      <div class="flex items-center text-gray-700 found-user__text font-normal">
-        Ya pertenece al canal: <strong class="font-bold mr-2 ml-1 capitalize">{{ searchedUsername }}</strong> 
-        <cross-icon></cross-icon>
-      </div>
-    </div>
-
-    <div class="w-full mb-4 mt-6" v-if="userAdded">
-      <div class="flex items-center text-gray-700 found-user__text font-normal">
-        Usuario agregado: <strong class="font-bold mr-2 ml-1 capitalize">{{ searchedUsername }}</strong> 
-        <check-icon></check-icon>
       </div>
     </div>
 
@@ -79,10 +85,11 @@
         <span>Buscar</span>
       </button>
       <button 
-        class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" 
+        class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
         v-if="foundUserData && !searchingUser"
+        @click="startChat"
       >
-        Enviar mensaje
+        Iniciar conversación
       </button>
     </div>
   </base-dialog>
@@ -96,6 +103,16 @@ import CheckIcon from '@/components/CheckIcon.vue';
 import CrossIcon from '@/components/CrossIcon.vue';
 
 export default {
+  props: {
+    messagesList: {
+      type: Array,
+      default: () => []
+    },
+    user: {
+      type: Object,
+      default: () => {}
+    }
+  },
   name: 'add-member-modal',
   components: {
     BaseDialog,
@@ -111,6 +128,7 @@ export default {
       searchedUsername: null,
       memberInChannel: false,
       userAdded: false,
+      message: null
     }
   },
   methods: {
@@ -122,6 +140,7 @@ export default {
       if(this.searchingUser || this.userAdded) return;
       const userName = this.userName.toLowerCase();
       this.searchedUsername = null;
+      this.message = null;
 
       if(userName) {
         this.errors = null;
@@ -138,6 +157,18 @@ export default {
         this.errors = 'Por favor ingrese un nombre de usuario'
       }
     },
+    startChat() {
+      const data = {
+        author: this.user.data.id,
+        destinationId: this.foundUserData.id,
+        message: this.message,
+        name: this.foundUserData.name,
+        lastName: this.foundUserData.lastName,
+        userName: this.foundUserData.userName
+      };
+
+      this.$store.dispatch('message/startDirectMessage', data);
+    }
   },
   computed: {
     searchingUser() {

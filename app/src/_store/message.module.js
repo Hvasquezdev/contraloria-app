@@ -6,7 +6,8 @@ const state = {
     fetchingMessageText: false,
     sendingMessage: false,
     fetchingDirectMessages: false,
-    fetchingDirectMessagesContent: false
+    fetchingDirectMessagesContent: false,
+    startingChat: false
   },
   currentPage: 0,
   channelMessages: []
@@ -71,6 +72,18 @@ const mutations = {
 
   getMessagesTextFailure(state) {
     state.status = { fetchingMessageText: false };
+  },
+
+  startDirectMessageRequest(state) {
+    state.status = { startingChat: true };
+  },
+
+  startDirectMessageSuccess(state) {
+    state.status = { startingChat: false };
+  },
+
+  startDirectMessageFailure(state) {
+    state.status = { startingChat: false };
   },
 
   setChannelMessageTextContent(state, channelMessages) {
@@ -161,6 +174,19 @@ const actions = { // TODO: get message author data, check if the message has med
         throw error;
       });
   },
+  startDirectMessage({ commit }, data) {
+    commit('startDirectMessageRequest');
+
+    return messageService.startDirectMessage(data)
+      .then((response) => {
+        commit('startDirectMessageSuccess');
+        return response;
+      })
+      .catch((error) => {
+        commit('startDirectMessageFailure');
+        throw error;
+      });
+  }
 };
 
 export const message = {

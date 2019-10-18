@@ -182,6 +182,21 @@ export default {
         this.publicChannels.push(dataToPush);
       }
     });
+    this.$socket.on("startedInbox", data => {
+      const inboxData = {
+        destinationId: data.destinationId,
+        userId: data.author,
+        name: data.name,
+        lastName: data.lastName,
+        userName: data.userName,
+        id: data.id,
+        message: data.message
+      };
+      
+      this.directMessages.push(inboxData);
+      this.setSelectedInbox(inboxData);
+      this.$store.dispatch('dialogs/toggleSearchUserDialog', false);
+    });
   },
   data() {
     return {
@@ -226,6 +241,8 @@ export default {
         this.$store.dispatch("channel/setSelectedChannel", null);
         this.$emit("setChannelMessages", []);
       }
+
+      console.log(message)
 
       this.$store
         .dispatch("channel/setSelectedInbox", message)
