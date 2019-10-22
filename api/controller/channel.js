@@ -136,4 +136,21 @@ exports.get_by_name = function(req, res) {
       }
     });
   }
+};
+
+exports.leave_channel = function(req, res, io) {
+  const channelMemberId = req.body.id;
+
+  if(channelMemberId < 0 || !channelMemberId) {
+    res.status(400).send({ error: true, message: 'Please provide the channel member id' });
+  } else {
+    Channel.leave(channelMemberId, function(err, user) {
+      if(err) {
+        res.send(err);
+      } else {
+        io.sockets.emit('leavedChannel', req.body);
+        res.json(user);
+      }
+    });
+  }
 }

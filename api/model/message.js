@@ -41,7 +41,7 @@ Message.getDirectMessageMedia = function(messageContentId, result) {
 }
 
 Message.getUserDirectMessages = function(userId, result) {
-  mysqlConnection.query("SELECT T1.id, name, lastName, userId, destinationId FROM message T1 INNER JOIN users T2 ON T2.id = T1.destinationId WHERE T1.userId = ? OR T1.destinationId = ?", [userId, userId], function(err, res) {
+  mysqlConnection.query("SELECT T1.id, name, lastName, userName, userId, destinationId FROM message T1 INNER JOIN users T2 ON T2.id = T1.destinationId WHERE T1.userId = ? OR T1.destinationId = ?", [userId, userId], function(err, res) {
     if(err) {
       result(err, null);
     } else {

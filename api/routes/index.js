@@ -38,6 +38,11 @@ module.exports = function(app, io, upload, dirPath) {
   app.route('/channel/:channelName/search')
     .get(channel.get_by_name);
 
+  app.route('/channel/leave')
+    .delete(function(req, res) {
+      return channel.leave_channel(req, res, io);
+    });
+
   // Messages Routes
   app.route('/messages/:channelId/:page')
     .get(message.get_all_by_channel);

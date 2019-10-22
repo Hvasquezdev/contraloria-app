@@ -36,13 +36,21 @@
       >
         <span>Selecciona un canal</span>
       </div>
-      <div class="flex button-add-member items-center pb-2 pt-4 px-4 mb-2 opacity-50 cursor-pointer">
+      <div class="flex button-add-member items-center pb-2 pt-4 px-4 mb-2 opacity-50 cursor-pointer" v-if="inChannel">
         <button 
           class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-full"
           :class="{ 'disabled-button': !inChannel || loggedUser && loggedUser.rol.name !== 'admin' }"
           @click="openNewChannelMemberDialog"
         >
           Agregar
+        </button>
+      </div>
+      <div class="flex button-add-member items-center pb-2 pt-4 px-4 mb-2 cursor-pointer" v-if="inChannel">
+        <button 
+          class="bg-red-500 hover:bg-red-400 text-white font-semibold py-2 px-4 rounded shadow w-full"
+          @click="openLeaveChannelDialog"
+        >
+          Abandonar canal
         </button>
       </div>
     </div>
@@ -54,6 +62,12 @@ const TheLoader = () => import('@/components/TheLoader.vue');
 
 export default {
   name: 'chat-members-list',
+  props: {
+    user: {
+      type: Object,
+      default: () => {}
+    }
+  },
   components: {
     TheLoader,
   },
@@ -74,6 +88,15 @@ export default {
         this.channelMembers.push(memberData);
       }
     });
+    this.$socket.on('leavedChannel', (data) => {
+      if(this.user.data.id === data.memberId) {
+        const memberToRemove = this.channelMembers.find((member) => member.memberId === data.memberId);
+        const memberIndex = this.channelMembers.indexOf(memberToRemove);
+        
+        this.channelMembers.splice(memberIndex, 1);
+      }
+      return;
+    });
   },
   data() {
     return {
@@ -90,6 +113,11 @@ export default {
       if(!this.inChannel || this.loggedUser && this.loggedUser.rol.name !== 'admin') return;
       this.$store.dispatch('dialogs/toggleNewChanneMemberlDialog', true);
     },
+    openLeaveChannelDialog() {
+      const channelMemberData = this.channelMembersList.find((member) => member.memberId === this.user.data.id);
+      this.$emit('setLeaveChannelDialogData', channelMemberData);
+      this.$store.dispatch('dialogs/toggleLeaveChannelDialog', true);
+    }
   },
   computed: {
     inChannel() {

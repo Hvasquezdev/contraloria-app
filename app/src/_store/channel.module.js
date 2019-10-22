@@ -71,6 +71,18 @@ const mutations = {
     state.status = { searchingChannel: false };
   },
 
+  leaveChannelRequest(state) {
+    state.status = { leavingChannel: true };
+  },
+
+  leaveChannelSuccess(state) {
+    state.status = { leavingChannel: false };
+  },
+
+  leaveChannelFailure(state) {
+    state.status = { leavingChannel: false };
+  },
+
   setChannelFound(state, channel) {
     state.channelFound = channel;
   },
@@ -177,6 +189,19 @@ const actions = {
   },
   setChannelFound({ commit }, channel) {
     commit('setChannelFound', channel);
+  },
+  leaveChannel({ commit }, channelMemberData) {
+    commit('leaveChannelRequest');
+
+    return channelService.leaveChannel(channelMemberData)
+      .then((response) => {
+        commit('leaveChannelSuccess');
+        return response;
+      })
+      .catch((error) => {
+        commit('leaveChannelFailure');
+        throw error;
+      })
   }
 };
 

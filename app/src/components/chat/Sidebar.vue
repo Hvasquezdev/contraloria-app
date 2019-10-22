@@ -204,6 +204,12 @@ export default {
       privateChannels: []
     };
   },
+  watch: {
+    channels() {
+      this.getPrivateChannels();
+      this.getPublicChannels();
+    }
+  },
   methods: {
     logOut() {
       this.$store.dispatch("account/logout");

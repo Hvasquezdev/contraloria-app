@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <div class="w-full mb-4 mt-6" v-if="foundUserData && !searchingUser && !memberInChannel && !userAdded">
+    <div class="w-full mb-4 mt-6" v-if="foundUserData && !searchingUser">
       <div class="flex items-center capitalize text-gray-700 found-user__text font-normal">
         Usuario: 
         <strong class="font-bold mr-2 ml-1 capitalize">
@@ -41,27 +41,17 @@
       </div>
     </div>
 
-    <!-- <div
-      class="flex flex-wrap -mx-3 mb-4 mt-4"
-      v-if="foundUserData && !searchingUser"
-    >
-      <div class="w-full px-3">
-        <label class="block tracking-wide text-gray-700 text-xs font-semibold uppercase mb-2 text-left" for="channelName">
-          Escribe un mensaje para inciar una conversación
-        </label>
-        <input 
-          class="shadow appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-          id="message" 
-          type="text" 
-          placeholder="Mensaje"
-          v-model.trim="message"
-          :disabled="searchingUser"
-          @keyup.enter="startChat"
-        >
+    <div class="w-full mb-4 mt-4" v-if="foundUserData && !searchingUser && hasActiveConversation">
+      <div class="flex flex-col items-start capitalize text-gray-700 found-user__text font-normal">
+        Ya estas en una conversacion con:
+        <strong class="font-bold mr-2 ml-1 capitalize">
+          ({{ searchedUsername }}): 
+          {{ foundUserData.name }} {{ foundUserData.lastName }}
+        </strong> 
       </div>
-    </div> -->
+    </div>
 
-    <div class="w-full mb-4 mt-6" v-if="!foundUserData && !searchingUser && searchedUsername && !memberInChannel && !userAdded">
+    <div class="w-full mb-4 mt-6" v-if="!foundUserData && !searchingUser && searchedUsername">
       <div class="flex items-center capitalize text-gray-700 found-user__text font-normal">
         No se encontró: <strong class="font-bold mr-2 ml-1 capitalize">{{ searchedUsername }}</strong> 
         <cross-icon></cross-icon>
@@ -86,7 +76,7 @@
       </button>
       <button 
         class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
-        v-if="foundUserData && !searchingUser"
+        v-if="foundUserData && !searchingUser && !hasActiveConversation"
         @click="startChat"
       >
         Iniciar conversación
@@ -113,7 +103,7 @@ export default {
       default: () => {}
     }
   },
-  name: 'add-member-modal',
+  name: 'search-user-modal',
   components: {
     BaseDialog,
     TheLoader,
@@ -158,6 +148,8 @@ export default {
       }
     },
     startChat() {
+      if(!this.foundUserData || this.hasActiveConversation) return;
+
       const data = {
         author: this.user.data.id,
         destinationId: this.foundUserData.id,
@@ -177,6 +169,16 @@ export default {
     inChannel() {
       return this.$store.state.channel.inChannel;
     },
+    hasActiveConversation() {
+      if(!this.foundUserData) return false;
+
+      const hasConversation = this.messagesList.find((message) => message.userName === this.foundUserData.userName) || null;
+      if(hasConversation) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
 }
 </script>

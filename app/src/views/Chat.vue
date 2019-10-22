@@ -31,6 +31,12 @@
       :user="user"
     ></search-user-dialog>
 
+    <!-- Dialog / Leave channel -->
+    <leave-channel-dialog
+      :leaveChannelData="leaveChannelData"
+      v-if="showLeaveChannelDialog"
+    ></leave-channel-dialog>
+
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
 
@@ -99,7 +105,10 @@
       </div>
     </div>
 
-    <channel-users-list></channel-users-list>
+    <channel-users-list
+      :user="user"
+      @setLeaveChannelDialogData="setLeaveChannelDialogData"
+    ></channel-users-list>
   </div>
 </template>
 
@@ -113,6 +122,7 @@ const AddMemberDialog = () => import('@/components/dialogs/AddMemberDialog.vue')
 const SearchChannelDialog = () => import('@/components/dialogs/SearchChannelDialog.vue');
 const EditUserDialog = () => import('@/components/dialogs/EditUserDialog.vue');
 const searchUserDialog = () => import('@/components/dialogs/SearchUserDialog.vue');
+const LeaveChannelDialog = () => import('@/components/dialogs/LeaveChannelDialog.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -146,6 +156,7 @@ export default {
     this.listenSentDirectMessageEvent();
     this.listenSentDirectMessageWithMedia();
     this.listenSentDirectMessageMedia();
+    this.listenLeaveChannelEvent();
   },
   components: {
     ChatNavbar,
@@ -156,7 +167,8 @@ export default {
     MessageComponent,
     SearchChannelDialog,
     EditUserDialog,
-    searchUserDialog
+    searchUserDialog,
+    LeaveChannelDialog
   },
   data() {
     return {
@@ -170,6 +182,7 @@ export default {
       channel_message_waiting: null,
       direct_message_waiting: null,
       showSidebar: false,
+      leaveChannelData: {}
     }
   },
   methods: {
@@ -277,6 +290,19 @@ export default {
         this.dMessagesContent.push(this.direct_message_waiting);
       });
     },
+    listenLeaveChannelEvent() {
+      this.$socket.on('leavedChannel', (data) => {
+        if(this.user.data.id === data.memberId) {
+          const channelToLeave = this.channel_list.find((channel) => channel.channelId === data.channelId);
+          const channelToLeaveIndex = this.channel_list.indexOf(channelToLeave);
+
+          this.channel_list.splice(channelToLeaveIndex, 1);
+          this.channel_messages = [];
+          this.$store.dispatch("channel/setSelectedChannel", null);
+        }
+        return;
+      });
+    },
     setMessageData(user, message) {
       return {
         id: message.insertId,
@@ -294,6 +320,9 @@ export default {
     },
     closeSidebar() {
       this.showSidebar = false;
+    },
+    setLeaveChannelDialogData(data) {
+      this.leaveChannelData = data;
     }
   },
   computed: {
@@ -311,6 +340,9 @@ export default {
     },
     showSearchUserDialog() {
       return this.$store.state.dialogs.isOpen.searchUser;
+    },
+    showLeaveChannelDialog() {
+      return this.$store.state.dialogs.isOpen.leaveChannel;
     },
     inChannel() {
       return this.$store.state.channel.inChannel;

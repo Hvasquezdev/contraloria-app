@@ -101,6 +101,17 @@ Channel.getByName = function(channelName, result) {
   });
 };
 
+Channel.leave = function(channelMemberId, result) {
+  mysqlConnection.query("DELETE FROM channel_member WHERE id = ?", [channelMemberId], function(err, res) {
+    if(err) {
+      console.log('error: ', err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
+
 module.exports = {
   Channel
 };
