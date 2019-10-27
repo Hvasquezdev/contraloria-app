@@ -37,6 +37,14 @@
       v-if="showLeaveChannelDialog"
     ></leave-channel-dialog>
 
+    <!-- Dialog / Upload File -->
+    <upload-file-dialog
+      v-model="messageText"
+      v-if="showUploadFileDialog"
+      @setMediaFile="setMediaFile"
+      @sendMessage="sendMessage"
+    ></upload-file-dialog>
+
     <!-- Chat content -->
     <div class="flex-1 flex flex-col bg-white overflow-hidden">
 
@@ -88,7 +96,7 @@
 
       <div class="pb-6 px-6 flex-none">
         <div class="flex rounded-lg border-1 border-dark-blue overflow-hidden">
-          <span class="text-3xl text-green-900 border-r-1 border-dark-blue p-2 cursor-pointer" @click="$refs.file.click()">
+          <span class="text-3xl text-green-900 border-r-1 border-dark-blue p-2 cursor-pointer" @click="openUploadFile">
             <svg
               class="fill-current h-6 w-6 block"
               xmlns="http://www.w3.org/2000/svg"
@@ -99,8 +107,13 @@
               />
             </svg>
           </span>
-          <input type="file" ref="file" class="hidden" @change="setMedia" />
-          <input type="text" class="w-full px-4 font-dark-blue" placeholder="Escribe tu mensaje" v-model.trim="messageText" @keyup.enter="sendMessage" />
+          <input
+            type="text"
+            class="w-full px-4 font-dark-blue"
+            placeholder="Escribe tu mensaje"
+            v-model.trim="messageText"
+            @keyup.enter="sendMessage"
+          />
         </div>
       </div>
     </div>
@@ -123,6 +136,7 @@ const SearchChannelDialog = () => import('@/components/dialogs/SearchChannelDial
 const EditUserDialog = () => import('@/components/dialogs/EditUserDialog.vue');
 const searchUserDialog = () => import('@/components/dialogs/SearchUserDialog.vue');
 const LeaveChannelDialog = () => import('@/components/dialogs/LeaveChannelDialog.vue');
+const UploadFileDialog = () => import('@/components/dialogs/UploadFileDialog.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -168,7 +182,8 @@ export default {
     SearchChannelDialog,
     EditUserDialog,
     searchUserDialog,
-    LeaveChannelDialog
+    LeaveChannelDialog,
+    UploadFileDialog
   },
   data() {
     return {
@@ -188,6 +203,9 @@ export default {
   methods: {
     setChannelMessages(messages) {
       this.channel_messages = messages.reverse();
+    },
+    setMediaFile(file) {
+      this.messageMedia = file;
     },
     sendMessage(messageFromModal) {
       if(!this.inChannel && !this.inInbox) return;
@@ -209,19 +227,28 @@ export default {
         this.$store.dispatch('message/sendDirectMessage', message)
           .then(() => {
             this.messageText = null;
+            this.messageMedia = null;
+            if(this.showUploadFileDialog) {
+              this.$store.dispatch('dialogs/toggleUploadFileDialog', false);
+            }
           });
       } else {
         this.$store.dispatch('message/sendMessageToChannel', message)
           .then(() => {
             this.messageText = null;
+            this.messageMedia = null;
+            if(this.showUploadFileDialog) {
+              this.$store.dispatch('dialogs/toggleUploadFileDialog', false);
+            }
           });
       }
     },
     setDirectMessagesContent(messages) {
       this.dMessagesContent = messages;
     },
-    setMedia(e) {
-      this.messageMedia = e.target.files[0];
+    openUploadFile() {
+      if(!this.inChannel && !this.inInbox) return;
+      this.$store.dispatch('dialogs/toggleUploadFileDialog', true);
     },
     loadMoreMessages() {
       this.$store.commit('message/setCurrentPage', 10);
@@ -343,6 +370,9 @@ export default {
     },
     showLeaveChannelDialog() {
       return this.$store.state.dialogs.isOpen.leaveChannel;
+    },
+    showUploadFileDialog() {
+      return this.$store.state.dialogs.isOpen.uploadFile;
     },
     inChannel() {
       return this.$store.state.channel.inChannel;

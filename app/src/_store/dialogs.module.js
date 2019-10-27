@@ -5,7 +5,8 @@ const state = {
     searchChannel: false,
     editUser: false,
     searchUser: false,
-    leaveChannel: false
+    leaveChannel: false,
+    uploadFile: false
   }
 };
 
@@ -27,6 +28,9 @@ const mutations = {
   },
   toggleLeaveChannelDialog(state, value) {
     state.isOpen.leaveChannel = value;
+  },
+  toggleUploadFileDialog(state, value) {
+    state.isOpen.uploadFile = value;
   }
 };
 
@@ -48,6 +52,9 @@ const actions = {
   },
   toggleLeaveChannelDialog({ commit }, value) {
     commit('toggleLeaveChannelDialog', value);
+  },
+  toggleUploadFileDialog({ commit }, value) {
+    commit('toggleUploadFileDialog', value);
   }
 };
 
