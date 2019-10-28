@@ -78,6 +78,11 @@ export default {
     messageType: {
       type: String,
       required: true,
+    },
+    messageCount: {
+      type: Number,
+      default: 0,
+      required: true
     }
   },
   filters: {
@@ -108,6 +113,9 @@ export default {
         .then(response => response.json())
         .then(data => this.messageMedia = data[0]);
     }
+    this.$nextTick(() => {
+      this.$emit('setLoadedMessages', this.messageCount);
+    });
   },
   methods: {
     downloadFile() {

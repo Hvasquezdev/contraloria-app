@@ -6,8 +6,8 @@
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active"><router-link to="/" tag="a" class="nav-link">Inicio</router-link></li>
-          <li class="nav-item"><a href="#" class="nav-link">Mision</a></li>
-          <li class="nav-item"><a href="#" class="nav-link">Vision</a></li>
+          <!-- <li class="nav-item"><a href="#" class="nav-link">Mision</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Vision</a></li> -->
           <li class="nav-item cta"><router-link to="/register" class="nav-link"><span>Registrarse</span></router-link></li>
         </ul>
       </div>

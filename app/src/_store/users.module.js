@@ -29,6 +29,7 @@ const mutations = {
   deleteFailure(state, { id, error }) {
     state.all.items = state.all.items.map((user) => {
       if(user.id === id) {
+        // eslint-disable-next-line
         const { deleting, ...userCopy } = user;
         return { ...userCopy, deleteError: error };
       }
@@ -47,6 +48,18 @@ const mutations = {
 
   getUserFailure(state, error) {
     state.user = { error };
+  },
+
+  editUserStatusRequest(state) {
+    state.rol = { editing: false }
+  },
+
+  editUserStatusSuccess(state) {
+    state.rol = { editing: false };
+  },
+
+  editUserStatusFailure(state, error) {
+    state.rol = { error, editing: false };
   },
 };
 
@@ -87,6 +100,20 @@ const actions = {
       (error) => {
         commit('getUserFailure', error);
         commit('getUserRequest', false);
+      });
+  },
+
+  editUserStatus({ commit }, data) {
+    commit('editUserStatusRequest');
+console.log(data)
+    return userService.updateStatus(data)
+      .then((response) => {
+        commit('editUserStatusSuccess');
+        return response;
+      },
+      (error) => {
+        commit('editUserStatusFailure', error);
+        throw error;
       });
   }
 };

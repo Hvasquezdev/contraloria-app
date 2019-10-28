@@ -125,3 +125,20 @@ exports.edit_user = function(req, res) {
     }
   }
 }
+
+exports.change_status = function(req, res, io) {
+  const { userId, status } = req.body;
+
+  if(userId === null || !status || userId === undefined) {
+    res.status(400).send({ error: true, message: 'Provide the userId and status' });
+  } else {
+    Rol.changeStatus({ userId, status }, function(err, response) {
+      if(err) {
+        res.send(err);
+      } else {
+        io.sockets.emit('userStatusChanged', { userId, status });
+        res.json(response);
+      }
+    });
+  }
+}

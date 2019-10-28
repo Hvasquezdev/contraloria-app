@@ -153,7 +153,7 @@ export default {
       required: true
     },
     directMessages: {
-      type: Array,
+      type: [Array, Object],
       required: true
     },
     showSidebar: {
@@ -183,15 +183,7 @@ export default {
       }
     });
     this.$socket.on("startedInbox", data => {
-      const inboxData = {
-        destinationId: data.destinationId,
-        userId: data.author,
-        name: data.name,
-        lastName: data.lastName,
-        userName: data.userName,
-        id: data.id,
-        message: data.message
-      };
+      const inboxData = this.getParsedData(data);
       
       this.directMessages.push(inboxData);
       this.setSelectedInbox(inboxData);
@@ -248,8 +240,6 @@ export default {
         this.$emit("setChannelMessages", []);
       }
 
-      console.log(message)
-
       this.$store
         .dispatch("channel/setSelectedInbox", message)
         .then(() => {
@@ -289,6 +279,22 @@ export default {
     onClickOutside() {
       if(!this.showSidebar || this.getScreenSize() >= 1024) return;
       this.$emit('close-sidebar');
+    },
+    validateMessageData(data) {
+      console.log(data);
+      return data
+    },
+    getParsedData(data) {
+      const inboxData = {
+        destinationId: data.destination.id,
+        userId: data.author.id,
+        name: this.user.data.name === data.destination.name ? data.author.name : data.destination.name,
+        lastName: this.user.data.lastName === data.destination.lastName ? data.author.lastName : data.destination.lastName,
+        userName: this.user.data.userName === data.destination.userName ? data.author.userName : data.destination.userName,
+        id: data.id,
+        message: data.message
+      };
+      return inboxData;
     }
   },
   computed: {

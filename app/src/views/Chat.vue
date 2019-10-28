@@ -50,6 +50,7 @@
 
       <!-- Top bar -->
       <chat-navbar
+        :user="user"
         @open-sidebar="openSidebar"
       ></chat-navbar>
 
@@ -57,7 +58,7 @@
       <div class="px-6 py-4 flex-1 overflow-y-scroll chat-messages--container flex flex-col">
 
       <button
-        v-if="channel_messages.length > 0"
+        v-if="channel_messages.length > 0 && shouldLoadMoreMessages"
         class="bg-transparent hover:bg-blue-500 text-blue-700 ml-auto mr-auto mb-4 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
         @click="loadMoreMessages"
       >
@@ -67,7 +68,7 @@
         <!-- A message -->
         <template v-if="channel_messages.length > 0">
           <message-component
-            v-for="message in channel_messages" :key="message.id"
+            v-for="(message, index) in channel_messages" :key="message.id"
             :fullName="`${message.name} ${message.lastName}`"
             :userName="message.userName"
             :messageText="message.content"
@@ -75,7 +76,9 @@
             :hasMedia="message.hasMedia"
             :hasText="message.hasText"
             :channelMessageId="message.id"
+            :messageCount="index + 1"
             messageType="channel"
+            @setLoadedMessages="setLoadedMessages"
           ></message-component>
         </template>
 
@@ -89,7 +92,9 @@
             :hasText="message.hasText"
             :messageDate="message.date_message"
             :messageContentId="message.id"
+            :messageCount="index + 1"
             messageType="inbox"
+            @setLoadedMessages="setLoadedMessages"
           ></message-component>
         </template>
       </div>
@@ -158,6 +163,7 @@ export default {
 
     this.$store.dispatch('message/getDirectMessagesByUser', user.data.id)
       .then(messages => {
+        console.log(messages)
         this.dMessagesList = messages;
       })
       .catch(error => {
@@ -197,7 +203,19 @@ export default {
       channel_message_waiting: null,
       direct_message_waiting: null,
       showSidebar: false,
-      leaveChannelData: {}
+      leaveChannelData: {},
+      loadedMessages: 0,
+      hasMoreMessages: true
+    }
+  },
+  watch: {
+    loadedMessages(newVal) {
+      if((newVal > 0 && newVal === this.dMessagesContent.length) || (newVal > 0 && newVal === this.channel_messages.length)) {
+        this.$nextTick(() => {
+          const msgWrapper = document.querySelector('.chat-messages--container');
+          this.scrollBottom(msgWrapper);
+        })
+      }
     }
   },
   methods: {
@@ -223,8 +241,21 @@ export default {
         }
       };
 
+
       if(this.inInbox) {
-        this.$store.dispatch('message/sendDirectMessage', message)
+        const inboxData = {
+          destinationData: {
+            name: this.inInbox.name,
+            lastName: this.inInbox.lastName,
+            userName: this.inInbox.userName
+          },
+          authorData: {
+            name: this.user.data.name,
+            lastName: this.user.data.lastName,
+            userName: this.user.data.userName
+          }
+        };
+        this.$store.dispatch('message/sendDirectMessage', {...message, ...inboxData})
           .then(() => {
             this.messageText = null;
             this.messageMedia = null;
@@ -233,7 +264,14 @@ export default {
             }
           });
       } else {
-        this.$store.dispatch('message/sendMessageToChannel', message)
+        const channelData = {
+          authorData: {
+            name: this.user.data.name,
+            lastName: this.user.data.lastName,
+            userName: this.user.data.userName
+          }
+        };
+        this.$store.dispatch('message/sendMessageToChannel', {...message, ...channelData})
           .then(() => {
             this.messageText = null;
             this.messageMedia = null;
@@ -244,7 +282,12 @@ export default {
       }
     },
     setDirectMessagesContent(messages) {
+      this.dMessagesContent = null;
+      this.setLoadedMessages(0);
       this.dMessagesContent = messages;
+    },
+    setLoadedMessages(val) {
+      this.loadedMessages = val;
     },
     openUploadFile() {
       if(!this.inChannel && !this.inInbox) return;
@@ -256,17 +299,33 @@ export default {
       const currentPage = this.$store.state.message.currentPage;
       this.$store.dispatch('message/getMessagesByChannel', { channelId: this.inChannel.channelId, page: currentPage })
         .then((messages) => {
+          if(messages.length <= 0) {
+            this.hasMoreMessages = false;
+            return;
+          }
           const channelMessages = this.channel_messages;
           const newMessagesList = [...messages, ...channelMessages];
           this.channel_messages = newMessagesList;
         })
         .catch((error) => console.log(error))
     },
+    scrollBottom(wrapper) {
+      wrapper.scrollTop = wrapper.scrollHeight;
+    },
     listenSentMessageEvent() {
       this.$socket.on('sentMessageToChannel', (message) => {
         if(message.destinationId === this.inChannel.channelId) {
           const user = this.user;
-          const messageData = this.setMessageData(user, message);
+          const messageData = {
+            id: message.insertId,
+            name: message.authorData.name,
+            lastName: message.authorData.lastName,
+            userName: message.authorData.userName,
+            content: message.text.content,
+            hasText: message.hasText,
+            hasMedia: message.hasMedia,
+            date_message: new Date().toLocaleDateString()
+          };
 
           this.channel_messages.push(messageData);
         }
@@ -277,7 +336,16 @@ export default {
         if(message.destinationId === this.inChannel.channelId) {
           const user = this.user;
           console.log(message);
-          const messageData = this.setMessageData(user, message);
+          const messageData = {
+            id: message.insertId,
+            name: message.authorData.name,
+            lastName: message.authorData.lastName,
+            userName: message.authorData.userName,
+            content: message.text.content,
+            hasText: message.hasText,
+            hasMedia: message.hasMedia,
+            date_message: new Date().toLocaleDateString()
+          };
 
           this.channel_message_waiting = messageData;
         }
@@ -292,9 +360,19 @@ export default {
     },
     listenSentDirectMessageEvent() {
       this.$socket.on('sentDirectMessage', (message) => {
+        console.log(message, 'message')
         if(message.destinationId === this.inInbox.id) {
           const user = this.user;
-          const messageData = this.setMessageData(user, message);
+          const messageData = {
+            id: message.insertId,
+            name: message.authorData.name,
+            lastName: message.authorData.lastName,
+            userName: message.authorData.userName,
+            content: message.text.content,
+            hasText: message.hasText,
+            hasMedia: message.hasMedia,
+            date_message: new Date().toLocaleDateString()
+          };
 
           this.dMessagesContent.push(messageData);
         }
@@ -373,6 +451,9 @@ export default {
     },
     showUploadFileDialog() {
       return this.$store.state.dialogs.isOpen.uploadFile;
+    },
+    shouldLoadMoreMessages() {
+      return this.hasMoreMessages && (this.dMessagesContent.length >= 10 || this.channel_messages.length >= 10);
     },
     inChannel() {
       return this.$store.state.channel.inChannel;

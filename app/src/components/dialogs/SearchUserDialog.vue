@@ -82,6 +82,27 @@
         Iniciar conversación
       </button>
     </div>
+    <div
+      class="flex justify-end pt-4"
+      v-if="user.rol.name === 'admin' && (foundUserData && !searchingUser)"
+    >
+      <button 
+        class="shadow bg-red-500 hover:bg-red-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded flex-1"
+        :class="{ 'opacity-75 pointer-events-none': requestMessage }"
+        v-if="foundUserData.status === 'active'"
+        @click="editUserStatus('inactive')"
+      >
+        {{ requestMessage || 'Inhabilitar Usuario' }}
+      </button>
+      <button 
+        class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded flex-1"
+        :class="{ 'opacity-75 pointer-events-none': requestMessage }"
+        v-else
+        @click="editUserStatus('active')"
+      >
+        {{ requestMessage || 'Habilitar Usuario' }}
+      </button>
+    </div>
   </base-dialog>
 </template>
 
@@ -118,7 +139,8 @@ export default {
       searchedUsername: null,
       memberInChannel: false,
       userAdded: false,
-      message: null
+      message: null,
+      requestMessage: null
     }
   },
   methods: {
@@ -151,15 +173,44 @@ export default {
       if(!this.foundUserData || this.hasActiveConversation) return;
 
       const data = {
-        author: this.user.data.id,
-        destinationId: this.foundUserData.id,
-        message: this.message,
-        name: this.foundUserData.name,
-        lastName: this.foundUserData.lastName,
-        userName: this.foundUserData.userName
+        author: {
+          id: this.user.data.id,
+          name: this.user.data.name,
+          lastName: this.user.data.lastName,
+          userName: this.user.data.userName
+        },
+        destination: {
+          id: this.foundUserData.id,
+          name: this.foundUserData.name,
+          lastName: this.foundUserData.lastName,
+          userName: this.foundUserData.userName
+        },
+        message: this.message
       };
 
       this.$store.dispatch('message/startDirectMessage', data);
+    },
+    editUserStatus(status) {
+      if(this.requestMessage) return;
+      const data = {
+        userId: this.foundUserData.id,
+        status
+      };
+
+      this.$store.dispatch('users/editUserStatus', data)
+        .then((response) => {
+          if(response.responseStatus == 200) {
+            if(response.status === 'active') {
+              this.requestMessage = 'Usuario habilitado';
+            } else {
+              this.requestMessage = 'Usuario inhabilitado';
+            }
+            setTimeout(() => {
+              this.closeDialog();
+            }, 1000);
+          }
+        })
+        .catch((error) => console.log(error));
     }
   },
   computed: {

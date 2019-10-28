@@ -9,7 +9,8 @@ export const userService = {
   getByUserName,
   update,
   delete: _delete,
-  editUser
+  editUser,
+  updateStatus
 };
 
 function login(userName, password) {
@@ -92,6 +93,16 @@ function update(user) {
   };
 
   return fetch(`/users/${user.id}`, requestOptions).then(handleResponse);
+}
+
+function updateStatus(data) {
+  const requestOptions = {
+      method: 'PUT',
+      headers: { ...authHeader(), 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+  };
+
+  return fetch(`http://localhost:3001/user/rol/status`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

@@ -14,6 +14,9 @@ module.exports = function(app, io, upload, dirPath) {
   app.route('/user/authenticate')
     .post(users.auth_user);
 
+  app.route('/user/rol/status')
+    .put(users.change_status);
+
   // Channel Routes
   app.route('/channel')
     .post(channel.new_channel);

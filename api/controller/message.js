@@ -74,6 +74,7 @@ exports.get_user_messages = function(req, res) {
       if(err) {
         res.send(err);
       } else {
+        console.log(messages)
         res.json(messages);
       }
     });
@@ -161,6 +162,7 @@ exports.send_direct_message = function(req, res, io) {
           ...newMessage,
           insertId: message.insertId
         }
+        console.log(messageToEmit)
         if(!newMessage.hasMedia) {
           io.sockets.emit('sentDirectMessage', messageToEmit);
         } else {
@@ -173,7 +175,16 @@ exports.send_direct_message = function(req, res, io) {
 }
 
 exports.start_direct_message = function(req, res, io) {
-  const data = req.body;
+  const data = {
+    author: req.body.author.id,
+    destinationId: req.body.destination.id,
+    message: req.body.message,
+    name: req.body.destination.name,
+    lastName: req.body.destination.lastName,
+    userName: req.body.destination.userName
+  };
+  const completeData = req.body;
+
   console.log('Controller starting direct message', data);
 
   if(!data.author || !data.destinationId) {
@@ -184,7 +195,7 @@ exports.start_direct_message = function(req, res, io) {
       if(err) {
         res.send(err);
       } else {
-        io.sockets.emit('startedInbox', { ...data, id: response.insertId });
+        io.sockets.emit('startedInbox', { ...completeData, id: response.insertId });
         res.status(200).send({ error: false, message: 'Message started correctly', response });
       }
     });

@@ -6,7 +6,9 @@ import '@/assets/scss/tailwind.scss';
 import VueParticles from 'vue-particles';
 import VueSocketIO from 'vue-socket-io';
 import vClickOutside from 'v-click-outside';
+import Vuelidate from 'vuelidate';
 
+Vue.use(Vuelidate);
 Vue.use(VueSocketIO, 'http://localhost:3001');
 Vue.use(VueParticles);
 

@@ -40,7 +40,7 @@
         <button 
           @click="handleSubmit" 
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          :class="{ 'is-disabled': isCheckingUser }"
+          :class="{ 'is-disabled': isCheckingUser || isInvalid }"
           type="button"
         >
           Iniciar Sesion
@@ -57,6 +57,7 @@
 <script>
 import DefaultLayout from "@/layouts/Default.vue";
 import { mapActions } from 'vuex';
+import { required, alphaNum } from 'vuelidate/lib/validators';
 
 export default {
   name: 'login-page',
@@ -72,10 +73,22 @@ export default {
       errors: null,
     }
   },
+  validations: {
+    user: {
+      userName: {
+        required,
+        alphaNum
+      },
+      password: {
+        required,
+        alphaNum
+      }
+    }
+  },
   methods: {
     ...mapActions('account', ['login']),
     handleSubmit() {
-      if(this.isCheckingUser) return;
+      if(this.isCheckingUser || this.isInvalid) return;
       const { userName, password } = this.user;
       if(userName && password) {
         this.errors = null;
@@ -98,6 +111,9 @@ export default {
   computed: {
     isCheckingUser() {
       return this.$store.state.account.status.checkingUser || false;
+    },
+    isInvalid() {
+      return this.$v.user.userName.$invalid || this.$v.user.password.$invalid;
     }
   },
 };

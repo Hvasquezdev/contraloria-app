@@ -68,7 +68,7 @@
       <div class="flex items-center justify-between">
         <button 
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
-          :class="{ 'is-disabled': isCheckingUser }"
+          :class="{ 'is-disabled': isCheckingUser || isInvalid }"
           type="button" 
           @click="handleSubmit"
         >
@@ -87,6 +87,7 @@
 <script>
 import DefaultLayout from "@/layouts/Default.vue";
 import { mapActions } from 'vuex';
+import { required, alphaNum, minLength } from 'vuelidate/lib/validators';
 
 export default {
   name: 'register-page',
@@ -104,10 +105,32 @@ export default {
       errors: null
     }
   },
+  validations: {
+    user: {
+      userName: {
+        required,
+        alphaNum,
+        minLength: minLength(5)
+      },
+      name: {
+        required,
+        alphaNum
+      },
+      lastName: {
+        required,
+        alphaNum
+      },
+      password: {
+        required,
+        alphaNum,
+        minLength: minLength(5)
+      }
+    }
+  },
   methods: {
     ...mapActions('account', ['register']),
     handleSubmit() {
-      if(this.isCheckingUser) return;
+      if(this.isCheckingUser || this.isInvalid) return;
       const userData = {
         name: this.user.name.toLowerCase(),
         lastName: this.user.lastName.toLowerCase(),
@@ -133,6 +156,9 @@ export default {
   computed: {
     isCheckingUser() {
       return this.$store.state.account.status.checkingUser || false;
+    },
+    isInvalid() {
+      return this.$v.user.userName.$invalid || this.$v.user.password.$invalid || this.$v.user.name.$invalid || this.$v.user.lastName.$invalid;
     }
   },
 };

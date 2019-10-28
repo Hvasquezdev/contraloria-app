@@ -31,8 +31,16 @@
         </div>
       </transition>
     </div>
-    <div class="ml-auto hidden md:block">
-      <div class="relative flex items-center">
+    <div class="ml-auto hidden md:flex items-center">
+      <button
+        v-if="user.rol.name === 'admin'"
+        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+        @click="openSearchUserDialog"
+      >
+        Buscar Usuario
+      </button>
+
+      <div class="relative flex items-center ml-2">
         <input
           type="search"
           placeholder="Buscar canal"
@@ -58,6 +66,12 @@
 
 <script>
 export default {
+  props: {
+    user: {
+      type: Object,
+      default: () => {},
+    }
+  },
   name: 'chat-navbar',
   data() {
     return {
@@ -98,7 +112,10 @@ export default {
     },
     openSidebar() {
       this.$emit('open-sidebar');
-    }
+    },
+    openSearchUserDialog() {
+      this.$store.dispatch("dialogs/toggleSearchUserDialog", true);
+    },
   },
 }
 </script>

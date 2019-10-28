@@ -43,7 +43,6 @@ User.auth = function(user, result) {
                 status: rol[0].status
               }
             };
-            console.log(user)
     
             result(null, user);
           }
@@ -97,7 +96,7 @@ User.getAll = function(result) {
 };
 
 User.getByUserName = function(userName, result) {
-  mysqlConnection.query("SELECT id, name, lastName, userName FROM users WHERE userName = ?", [userName], function(err, res) {
+  mysqlConnection.query("SELECT T1.id, T1.name, lastName, userName, T2.status FROM users T1 INNER JOIN rol T2 ON T2.userId = T1.id WHERE userName = ?", [userName], function(err, res) {
     if(err) {
       console.log('error: ', err);
       result(err, null);
@@ -152,6 +151,16 @@ Rol.newRol = function(data, result) {
       result(null, res.insertId);
     }
   });
+}
+
+Rol.changeStatus = function(data, result) {
+  mysqlConnection.query('UPDATE rol SET status = ? WHERE userId = ?', [data.status, data.userId], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, { res, userId: data.userId, status: data.status, responseStatus: 200 });
+    }
+  })
 }
 
 module.exports = {

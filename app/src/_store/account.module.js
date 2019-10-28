@@ -48,6 +48,12 @@ const actions = {
       .then((user) => {
         if(user.status && user.status === 401) {
           commit('loginFailure', user.message);
+        } else if(user.rol.status === 'inactive') {
+          commit('loginFailure', 'user is inactive');
+          return {
+            status: 401,
+            message: 'El usuario esta inhabilitado'
+          };
         } else {
           commit('loginSuccess', user);
           router.push('/chat');
