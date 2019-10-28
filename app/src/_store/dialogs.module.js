@@ -6,7 +6,8 @@ const state = {
     editUser: false,
     searchUser: false,
     leaveChannel: false,
-    uploadFile: false
+    uploadFile: false,
+    removeUser: false
   }
 };
 
@@ -31,6 +32,9 @@ const mutations = {
   },
   toggleUploadFileDialog(state, value) {
     state.isOpen.uploadFile = value;
+  },
+  toggleRemoveUserDialog(state, value) {
+    state.isOpen.removeUser = value;
   }
 };
 
@@ -55,6 +59,9 @@ const actions = {
   },
   toggleUploadFileDialog({ commit }, value) {
     commit('toggleUploadFileDialog', value);
+  },
+  toggleRemoveUserDialog({ commit }, value) {
+    commit('toggleRemoveUserDialog', value);
   }
 };
 

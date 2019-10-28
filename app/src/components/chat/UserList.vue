@@ -17,11 +17,22 @@
     <div class="mb-8">
       <template v-if="channelMembersCount > 0 && channelMembers && !loadingChannelMembers && inChannel">
         <div 
-          class="flex items-center py-1 px-4 mb-2 opacity-50 cursor-pointer hover:bg-grey-100 user-item__name" 
+          class="flex items-center justify-between py-1 px-4 mb-2 opacity-50 cursor-pointer hover:bg-grey-100 user-item__name" 
           v-for="(member, index) in channelMembers" 
           :key="index"
         >
           <span class="capitalize">{{ member.member_data[0].name }} {{ member.member_data[0].lastName }}</span>
+          <svg
+            v-if="user.rol.name === 'admin'"
+            @click="openRemoveUserDialog(member.memberId)"
+            class="fill-current h-5 w-5 opacity-50 cursor-pointer"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <path
+              d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM11.4 10l2.83-2.83-1.41-1.41L10 8.59 7.17 5.76 5.76 7.17 8.59 10l-2.83 2.83 1.41 1.41L10 11.41l2.83 2.83 1.41-1.41L11.41 10z"
+            />
+          </svg>
         </div>
       </template>
       <div 
@@ -48,7 +59,7 @@
       <div class="flex button-add-member items-center pb-2 pt-4 px-4 mb-2 cursor-pointer" v-if="inChannel">
         <button 
           class="bg-red-500 hover:bg-red-400 text-white font-semibold py-2 px-4 rounded shadow w-full"
-          @click="openLeaveChannelDialog"
+          @click="openLeaveChannelDialog(user.data.id)"
         >
           Abandonar canal
         </button>
@@ -113,10 +124,15 @@ export default {
       if(!this.inChannel || this.loggedUser && this.loggedUser.rol.name !== 'admin') return;
       this.$store.dispatch('dialogs/toggleNewChanneMemberlDialog', true);
     },
-    openLeaveChannelDialog() {
-      const channelMemberData = this.channelMembersList.find((member) => member.memberId === this.user.data.id);
+    openLeaveChannelDialog(id) {
+      const channelMemberData = this.channelMembersList.find((member) => member.memberId === id);
       this.$emit('setLeaveChannelDialogData', channelMemberData);
       this.$store.dispatch('dialogs/toggleLeaveChannelDialog', true);
+    },
+    openRemoveUserDialog(id) {
+      const channelMemberData = this.channelMembersList.find((member) => member.memberId === id);
+      this.$emit('setLeaveChannelDialogData', channelMemberData);
+      this.$store.dispatch('dialogs/toggleRemoveUserDialog', true);
     }
   },
   computed: {

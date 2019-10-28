@@ -37,6 +37,12 @@
       v-if="showLeaveChannelDialog"
     ></leave-channel-dialog>
 
+    <!-- Dialog / Remove user of a channel -->
+    <remove-user-dialog
+      :leaveChannelData="leaveChannelData"
+      v-if="showRemoveUserDialog"
+    ></remove-user-dialog>
+
     <!-- Dialog / Upload File -->
     <upload-file-dialog
       v-model="messageText"
@@ -142,6 +148,7 @@ const EditUserDialog = () => import('@/components/dialogs/EditUserDialog.vue');
 const searchUserDialog = () => import('@/components/dialogs/SearchUserDialog.vue');
 const LeaveChannelDialog = () => import('@/components/dialogs/LeaveChannelDialog.vue');
 const UploadFileDialog = () => import('@/components/dialogs/UploadFileDialog.vue');
+const RemoveUserDialog = () => import('@/components/dialogs/RemoveUserChannelDialog.vue');
 
 export default {
   beforeRouteEnter (to, from, next) {
@@ -189,7 +196,8 @@ export default {
     EditUserDialog,
     searchUserDialog,
     LeaveChannelDialog,
-    UploadFileDialog
+    UploadFileDialog,
+    RemoveUserDialog
   },
   data() {
     return {
@@ -451,6 +459,9 @@ export default {
     },
     showUploadFileDialog() {
       return this.$store.state.dialogs.isOpen.uploadFile;
+    },
+    showRemoveUserDialog() {
+      return this.$store.state.dialogs.isOpen.removeUser;
     },
     shouldLoadMoreMessages() {
       return this.hasMoreMessages && (this.dMessagesContent.length >= 10 || this.channel_messages.length >= 10);
