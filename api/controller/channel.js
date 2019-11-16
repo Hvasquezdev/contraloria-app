@@ -154,3 +154,21 @@ exports.leave_channel = function(req, res, io) {
     });
   }
 }
+
+exports.delete_channel = function(req, res, io) {
+  const channel = req.body[0];
+  console.log(channel)
+
+  if(!channel.name) {
+    res.status(400).send({ error: true, message: 'Please provide the channel data' });
+  } else {
+    Channel._delete(channel, function(err, channel) {
+      if(err) {
+        res.send(err);
+      } else {
+        io.sockets.emit('deletedChannel', req.body);
+        res.json(channel);
+      }
+    });
+  }
+}

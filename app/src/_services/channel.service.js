@@ -10,7 +10,8 @@ export const channelService = {
   getChannelMembersData,
   addMember,
   searchByName,
-  leaveChannel
+  leaveChannel,
+  deleteChannel
 };
 
 function register(channel) {
@@ -117,6 +118,16 @@ function leaveChannel(channelMemberData) {
   };
 
   return fetch(`http://localhost:3001/channel/leave`, requestOptions).then(handleResponse);
+}
+
+function deleteChannel(channel) {
+  const requestOptions = {
+    method: 'DELETE',
+    headers:  { 'Content-Type': 'application/json' },
+    body: JSON.stringify(channel)
+  };
+
+  return fetch(`http://localhost:3001/channel/delete`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

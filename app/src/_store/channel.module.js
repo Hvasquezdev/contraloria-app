@@ -83,6 +83,18 @@ const mutations = {
     state.status = { leavingChannel: false };
   },
 
+  deleteChannelRequest(state) {
+    state.status = { deletingChannel: true };
+  },
+
+  deleteChannelSuccess(state) {
+    state.status = { deletingChannel: false };
+  },
+
+  deleteChannelFailure(state) {
+    state.status = { deletingChannel: false };
+  },
+
   setChannelFound(state, channel) {
     state.channelFound = channel;
   },
@@ -202,6 +214,19 @@ const actions = {
         commit('leaveChannelFailure');
         throw error;
       })
+  },
+  deleteChannel({ commit }, channel) {
+    commit('deleteChannelRequest');
+
+    return channelService.deleteChannel(channel)
+      .then((response) => {
+        commit('deleteChannelSuccess');
+        return response;
+      })
+      .catch((error) => {
+        commit('deleteChannelFailure');
+        throw error;
+      });
   }
 };
 

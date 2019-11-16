@@ -111,6 +111,23 @@ Channel.leave = function(channelMemberId, result) {
     }
   })
 }
+Channel._delete = function(channel, result) {
+  mysqlConnection.query("DELETE FROM channel WHERE id = ?", [channel.id], function(errMain) {
+    if(errMain) {
+      console.log('error: ', errMain);
+      result(errMain, null);
+    } else {
+      mysqlConnection.query("DELETE FROM channel_member WHERE channelId = ?", [channel.id], function(err, res) {
+        if(err) {
+          console.log('error: ', err);
+          result(err, null);
+        } else {
+          result(null, res);
+        }
+      })
+    }
+  })
+}
 
 module.exports = {
   Channel

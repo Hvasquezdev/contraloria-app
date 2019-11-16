@@ -46,6 +46,11 @@ module.exports = function(app, io, upload, dirPath) {
       return channel.leave_channel(req, res, io);
     });
 
+  app.route('/channel/delete')
+    .delete(function(req, res) {
+      return channel.delete_channel(req, res, io);
+    });
+
   // Messages Routes
   app.route('/messages/:channelId/:page')
     .get(message.get_all_by_channel);

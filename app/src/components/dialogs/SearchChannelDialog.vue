@@ -29,6 +29,20 @@
 
     <!--Footer-->
     <div class="flex justify-center pt-2">
+      <button
+        v-if="channelFound.length > 0 && deletingChannel && !confirmDelete"
+        class="bg-red-500 hover:bg-red-400 text-white font-semibold py-2 px-4 border border-red-500 rounded shadow mr-2 flex-1"
+        @click="deleteChannel" 
+      >
+        Eliminar (Confirmar)
+      </button>
+      <button
+        v-if="channelFound.length > 0 && !deletingChannel && !confirmDelete"
+        class="bg-red-500 hover:bg-red-400 text-white font-semibold py-2 px-4 border border-red-500 rounded shadow mr-2 flex-1"
+        @click="deleteChannelRequest" 
+      >
+        Eliminar
+      </button>
       <button 
         class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mr-2 flex-1"
         @click="closeDialog" 
@@ -36,11 +50,11 @@
         Cerrar
       </button>
       <button
-        v-if="channelFound.length > 0 && !userAdded && channelFound[0].type !== 'privado'"
+        v-if="channelFound.length > 0 && !userAdded && channelFound[0].type !== 'privado' && !deletingChannel"
         class="shadow bg-green-500 hover:bg-green-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded flex-1"
         @click="handleSubmit"
       >
-        Unirse al canal
+        Unirse
       </button>
     </div>
   </base-dialog>
@@ -57,7 +71,9 @@ export default {
   data() {
     return {
       errors: false,
-      userAdded: false
+      userAdded: false,
+      deletingChannel: false,
+      confirmDelete: false,
     }
   },
   methods: {
@@ -83,6 +99,15 @@ export default {
           console.log('Error:', error);
         });
     },
+    deleteChannelRequest() {
+      this.deletingChannel = true;
+    },
+    deleteChannel() {
+      this.$store.dispatch('channel/deleteChannel', this.channelFound)
+        .then(() => {
+          this.closeDialog();
+        });
+    }
   },
   computed: {
     searchedChannel() {

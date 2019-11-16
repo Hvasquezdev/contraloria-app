@@ -92,7 +92,13 @@ export default {
               channelId: data.response.channel,
               member_data: user.data
             };
-            this.setChannelFound([data.channel]);
+            const channelData = {
+              id: data.response.channel,
+              channelId: data.response.channel,
+              type: data.channel.type,
+              name: data.channel.name
+            }
+            this.setChannelFound([channelData]);
             this.addUserToChannel(memberData);
           })
           .catch(error => console.log(error));

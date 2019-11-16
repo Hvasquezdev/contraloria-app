@@ -60,12 +60,14 @@
         </div>
         <template v-if="privateChannels.length > 0">
           <div
-            class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-75 hover:bg-blue-900 channel-link"
+            class="pt-1 pb-2 px-4 text-white cursor-pointer opacity-75 hover:bg-blue-900 channel-link private-channel-link relative"
             :class="{ 'active-channel': inChannel && inChannel.channelId === channel.channelId }"
             v-for="(channel, index) in privateChannels"
             :key="index"
             @click="setSelectedChannel(channel)"
-          >{{ channel.channel_data[0].name }}</div>
+          >
+            {{ channel.channel_data[0].name }}
+          </div>
         </template>
         <template v-else>
           <div class="py-1 px-4 text-white text-sm">No estas en ningun canal privado</div>
@@ -182,12 +184,37 @@ export default {
         this.publicChannels.push(dataToPush);
       }
     });
+
     this.$socket.on("startedInbox", data => {
       const inboxData = this.getParsedData(data);
       
       this.directMessages.push(inboxData);
       this.setSelectedInbox(inboxData);
       this.$store.dispatch('dialogs/toggleSearchUserDialog', false);
+    });
+
+    this.$socket.on('deletedChannel', channel => {
+      console.log(channel)
+
+      if(channel[0].type === 'public') {
+        const channelToDelete = this.publicChannels.find((item) => {
+          return item.channelId === channel[0].id;
+        });
+        const channelIndex = this.channels.indexOf(channelToDelete);
+
+        this.channels.splice(channelIndex, 1);
+        this.setSelectedInbox(null);
+        this.setSelectedChannel(null);
+      } else {
+        const channelToDelete = this.privateChannels.find((item) => {
+          return item.channelId === channel[0].id;
+        });
+        const channelIndex = this.channels.indexOf(channelToDelete);
+
+        this.channels.splice(channelIndex, 1);
+        this.setSelectedInbox(null);
+        this.setSelectedChannel(null);
+      }
     });
   },
   data() {
@@ -345,6 +372,19 @@ export default {
 }
 .channel-link {
   transition: all 0.2s;
+}
+.channel-link.private-channel-link {
+  padding-right: 50px;
+}
+.channel-link.private-channel-link .remove-channel-btn {
+  position: absolute;
+  right: 26px;
+  top: 10px;
+  transform: rotate(45deg);
+  display: none;
+}
+.channel-link.private-channel-link:hover .remove-channel-btn {
+  display: block;
 }
 .channel-link:hover {
   opacity: 1;

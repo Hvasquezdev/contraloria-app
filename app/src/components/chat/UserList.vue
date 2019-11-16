@@ -84,7 +84,7 @@ export default {
   },
   mounted() {
     this.$socket.on('addedMemberToChannel', (member) => {
-      if(member.channelId === this.inChannel.channelId) {
+      if(this.inChannel.hasOwnProperty('channelId') && member.channelId === this.inChannel.channelId) {
         const memberData = {
           memberId: member.memberId,
           member_data: [
