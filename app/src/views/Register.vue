@@ -123,7 +123,7 @@ export default {
       password: {
         required,
         alphaNum,
-        minLength: minLength(5)
+        minLength: minLength(8)
       }
     }
   },
@@ -132,10 +132,10 @@ export default {
     handleSubmit() {
       if(this.isCheckingUser || this.isInvalid) return;
       const userData = {
-        name: this.user.name.toLowerCase(),
-        lastName: this.user.lastName.toLowerCase(),
-        userName: this.user.userName.toLowerCase(),
-        password: this.user.password.toLowerCase()
+        name: this.user.name,
+        lastName: this.user.lastName,
+        userName: this.user.userName,
+        password: this.user.password
       };
 
       if(this.user.name && this.user.lastName && this.user.userName && this.user.password) {

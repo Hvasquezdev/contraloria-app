@@ -142,3 +142,36 @@ exports.change_status = function(req, res, io) {
     });
   }
 }
+
+exports.get_secret_question = function(req, res) {
+  const { userName } = req.params;
+
+  if(!userName) {
+    res.status(400).send({ error: true, message: 'Provide the user name' });
+  } else {
+    User.getSecretQuestion({ userName }, function(err, response) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(response);
+      }
+    });
+  }
+}
+
+exports.recovery_password = function(req, res) {
+  const { userName, answer } = req.body;
+  console.log(req.body)
+
+  if(!userName) {
+    res.status(400).send({ error: true, message: 'Provide the username' });
+  } else {
+    User.recoveryPassword({ userName, answer }, function(err, response) {
+      if(err) {
+        res.send(err);
+      } else {
+        res.json(response);
+      }
+    });
+  }
+}

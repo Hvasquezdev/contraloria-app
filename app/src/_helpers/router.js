@@ -26,6 +26,11 @@ export const router = new Router({
       name: 'chat',
       component: () => import('@/views/Chat.vue'),
     },
+    {
+      path: '/recovery',
+      name: 'recovery-password',
+      component: () => import('@/views/RecoveryPassword.vue'),
+    },
 
     // otherwise redirect to home
     { path: '*', redirect: '/' }
@@ -33,7 +38,7 @@ export const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/', '/login', '/register'];
+  const publicPages = ['/', '/login', '/register', '/recovery'];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem('user');
 

@@ -17,6 +17,12 @@ module.exports = function(app, io, upload, dirPath) {
   app.route('/user/rol/status')
     .put(users.change_status);
 
+  app.route('/user/:userName/secret/question')
+    .get(users.get_secret_question);
+
+  app.route('/user/pass/recovery')
+    .post(users.recovery_password);
+
   // Channel Routes
   app.route('/channel')
     .post(channel.new_channel);

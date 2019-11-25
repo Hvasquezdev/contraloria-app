@@ -60,15 +60,7 @@ User.newUser = function(newUser, result) {
       console.log(err);
       result(err, null);
     } else {
-      const userId = res.insertId;
-      mysqlConnection.query("INSERT INTO rol set ?", [userId], function(err, res) {
-        if(err) {
-          console.log(err);
-          result(err, null);
-        } else {
-          result(null, res.insertId);
-        }
-      });
+      result(null, res.insertId);
     }
   });
 };
@@ -140,6 +132,28 @@ User.editUser = function(data, result) {
       result(null, res);
     }
   });
+}
+
+User.getSecretQuestion = function(data, result) {
+  const { userName } = data;
+  mysqlConnection.query("SELECT userName, name, lastName, question FROM users T1 INNER JOIN secret_question T2 ON T1.id = T2.userId WHERE userName = ?", [userName], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
+
+User.recoveryPassword = function(data, result) {
+  const { userName, answer } = data;
+  mysqlConnection.query("SELECT T1.id, userName, password FROM users T1 INNER JOIN secret_question T2 ON T2.userId = T1.id WHERE userName = ? AND T2.answer = ?", [userName, answer], function(err, res) {
+    if(err) {
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
 }
 
 Rol.newRol = function(data, result) {

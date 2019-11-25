@@ -45,7 +45,11 @@
         >
           Iniciar Sesion
         </button>
-        <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#" :class="{ 'is-disabled': isCheckingUser }">
+        <a
+          @click="$router.push('/recovery')"
+          class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
+          :class="{ 'is-disabled': isCheckingUser }"
+        >
           ¿Olvidaste tu contraseña?
         </a>
       </div>
