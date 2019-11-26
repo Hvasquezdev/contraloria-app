@@ -1,4 +1,4 @@
-const { User, Rol } = require('../model/index');
+const { User, Rol, SecretQuestion } = require('../model/index');
 
 exports.auth_user = function(req, res) {
   const { userName, password } = req.body;
@@ -21,7 +21,7 @@ exports.new_user = function(req, res) {
   const newUser = new User(req.body);
   console.log('Controller creating user');
 
-  if(!newUser.name || !newUser.lastName || !newUser.userName || !newUser.password) {
+  if(!newUser.name || !newUser.lastName || !newUser.userName || !newUser.password || !req.body.question || !req.body.answer) {
     res.status(400).send({ error: true, message: 'Please provide the complete user data' });
   } else {
 
@@ -49,7 +49,20 @@ exports.new_user = function(req, res) {
               if(err) {
                 res.send(err);
               } else {
-                res.status(200).send({ error: false, message: 'User registered correctly', rol });
+
+                const recoveryData = new SecretQuestion({
+                  question: req.body.question,
+                  answer: req.body.answer,
+                  userId: user
+                });
+                console.log(recoveryData)
+                SecretQuestion.setSecretQuestion(recoveryData, function(err, response) {
+                  if(err) {
+                    res.send(err);
+                  } else {
+                    res.status(200).send({ error: false, message: 'User registered correctly', response });
+                  }
+                });
               }
             });
 

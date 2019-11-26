@@ -62,6 +62,7 @@ export default {
     #348ac7 100%
   );
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#448ef6', endColorstr='#af05a9', GradientType=1 );
+  opacity: .6;
 }
 
 .hero-wrap {
@@ -70,6 +71,11 @@ export default {
   position: inherit;
   z-index: 0;
   font-family: "Work Sans", Arial, sans-serif;
+  background-image: url('../assets/contraloria-bg.jpg');
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+
   .overlay {
     position: absolute;
     top: 0;

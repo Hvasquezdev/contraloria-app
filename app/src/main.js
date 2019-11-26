@@ -7,6 +7,9 @@ import VueParticles from 'vue-particles';
 import VueSocketIO from 'vue-socket-io';
 import vClickOutside from 'v-click-outside';
 import Vuelidate from 'vuelidate';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(Vuelidate);
 Vue.use(VueSocketIO, 'http://localhost:3001');

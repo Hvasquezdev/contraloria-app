@@ -11,6 +11,12 @@ const Rol = function(data) {
   this.name = data.name;
   this.status = data.status;
   this.userId = data.userId;
+};
+
+const SecretQuestion = function(data) {
+  this.question = data.question;
+  this.answer = data.answer;
+  this.userId = data.userId;
 }
 
 User.auth = function(user, result) {
@@ -156,6 +162,17 @@ User.recoveryPassword = function(data, result) {
   })
 }
 
+SecretQuestion.setSecretQuestion = function(data, result) {
+  mysqlConnection.query("INSERT INTO secret_question set ?", [data], function(err, res) {
+    if(err) {
+      console.log(err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+}
+
 Rol.newRol = function(data, result) {
   mysqlConnection.query("INSERT INTO rol set ?", [data], function(err, res) {
     if(err) {
@@ -179,5 +196,6 @@ Rol.changeStatus = function(data, result) {
 
 module.exports = {
   User,
-  Rol
+  Rol,
+  SecretQuestion
 };

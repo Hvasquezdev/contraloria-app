@@ -50,6 +50,35 @@
       </div>
 
       <div class="flex flex-wrap -mx-3 mb-4">
+        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label for="secretQuestion" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left">
+            Pregunta secreta
+          </label>
+          <input 
+            type="text" 
+            class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="secretQuestion"
+            v-model="user.question"
+            @keyup.enter="handleSubmit"
+            placeholder="Pregunta secreta"  
+          >
+        </div>
+        <div class="w-full md:w-1/2 px-3 mb-4 md:mb-0">
+          <label for="secretAnswer" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left">
+            Respuesta
+          </label>
+          <input 
+            type="text" 
+            class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="secretAnswer"
+            v-model="user.answer"
+            @keyup.enter="handleSubmit"
+            placeholder="Respuesta"  
+          >
+        </div>
+      </div>
+
+      <div class="flex flex-wrap -mx-3 mb-4">
         <div class="w-full px-3">
           <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 text-left" for="grid-password">
             Password
@@ -101,6 +130,8 @@ export default {
         lastName: null,
         userName: null,
         password: null,
+        question: null,
+        answer: null
       },
       errors: null
     }
@@ -109,7 +140,6 @@ export default {
     user: {
       userName: {
         required,
-        alphaNum,
         minLength: minLength(5)
       },
       name: {
@@ -122,8 +152,13 @@ export default {
       },
       password: {
         required,
-        alphaNum,
         minLength: minLength(8)
+      },
+      question: {
+        required
+      },
+      answer: {
+        required
       }
     }
   },
@@ -135,11 +170,14 @@ export default {
         name: this.user.name,
         lastName: this.user.lastName,
         userName: this.user.userName,
-        password: this.user.password
+        password: this.user.password,
+        question: this.user.question,
+        answer: this.user.answer
       };
 
-      if(this.user.name && this.user.lastName && this.user.userName && this.user.password) {
+      if(this.user.name && this.user.lastName && this.user.userName && this.user.password && this.user.question && this.user.answer) {
         this.errors = null;
+        console.log('user-data-front', userData)
         this.register(userData)
           .then((response) => {
             if(response.error && response.status === 409) {
@@ -158,7 +196,7 @@ export default {
       return this.$store.state.account.status.checkingUser || false;
     },
     isInvalid() {
-      return this.$v.user.userName.$invalid || this.$v.user.password.$invalid || this.$v.user.name.$invalid || this.$v.user.lastName.$invalid;
+      return this.$v.user.userName.$invalid || this.$v.user.password.$invalid || this.$v.user.name.$invalid || this.$v.user.lastName.$invalid || this.$v.user.question.$invalid || this.$v.user.answer.$invalid;
     }
   },
 };

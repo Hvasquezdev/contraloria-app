@@ -15,6 +15,7 @@
               id="userName" 
               type="text" 
               v-model="user.userName"
+              @keyup.enter="getUser"
               placeholder="Nombre de usuario"
             >
           </div>
@@ -35,7 +36,7 @@
             Iniciar Sesión
           </a>
         </div>
-        <p class="text-red-600 text-xs italic pt-6" v-if="this.errors">{{ errors }}</p>
+        <p class="text-red-600 text-xs italic pt-6" v-if="this.errorMessage">{{ errorMessage }}</p>
       </div>
     </template>
     <template v-if="step === 'two' && !isLoading">
@@ -59,6 +60,7 @@
               id="questionAnswer" 
               type="text" 
               v-model="answer"
+              @keyup.enter="recoveryPassword"
               placeholder="Respuesta"
             >
           </div>
@@ -73,11 +75,14 @@
             Enviar
           </button>
           <a
+            @click="$router.push('/login')"
             class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
           >
             Cancelar
           </a>
         </div>
+
+        <p class="text-red-600 text-xs italic pt-6" v-if="this.errorMessage">{{ errorMessage }}</p>
       </div>
     </template>
     <template v-if="step === 'three' && !isLoading">
@@ -134,7 +139,8 @@ export default {
       isLoading: false,
       questionContent: {},
       answer: null,
-      recoveryContent: {}
+      recoveryContent: {},
+      errorMessage: null
     }
   },
   validations: {
@@ -156,6 +162,7 @@ export default {
     getUser() {
       if(!this.user.userName) return;
 
+      this.errorMessage = null;
       this.toggleLoading(true);
       const url = `http://localhost:3001/user/${this.user.userName}/secret/question`
       console.log(url)
@@ -168,6 +175,11 @@ export default {
             setTimeout(() => {
               this.toggleLoading(false);
             }, 1000);
+          } else {
+            setTimeout(() => {
+              this.errorMessage = 'Usuario no encontrado';
+              this.toggleLoading(false);
+            }, 1000);
           }
         })
         .catch(error => console.log(error));
@@ -178,6 +190,7 @@ export default {
     recoveryPassword() {
       if(!this.answer || !this.questionFetched) return;
 
+      this.errorMessage = null;
       this.toggleLoading(true);
       const url = `http://localhost:3001/user/pass/recovery`;
       const requestOptions = {
@@ -192,6 +205,11 @@ export default {
             this.recoveryContent = data[0];
             this.step = 'three';
             setTimeout(() => {
+              this.toggleLoading(false);
+            }, 1000);
+          } else {
+            setTimeout(() => {
+              this.errorMessage = 'Repuesta incorrecta';
               this.toggleLoading(false);
             }, 1000);
           }

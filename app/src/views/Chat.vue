@@ -19,7 +19,7 @@
     <add-member-dialog v-if="showNewMemberDialog"></add-member-dialog>
 
     <!-- Dialog / Search Channel -->
-    <search-channel-dialog v-if="showSearchChannelDialog"></search-channel-dialog>
+    <search-channel-dialog v-if="showSearchChannelDialog" :user="user"></search-channel-dialog>
 
     <!-- Dialog / Edit user info -->
     <edit-user-dialog v-if="showEditUserDialog"></edit-user-dialog>

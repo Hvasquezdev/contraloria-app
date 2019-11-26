@@ -42,6 +42,7 @@ function register(user) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(user),
   };
+  console.log(user)
 
   return fetch('http://localhost:3001/users', requestOptions).then(handleResponse);
 }

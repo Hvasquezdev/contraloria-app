@@ -30,14 +30,14 @@
     <!--Footer-->
     <div class="flex justify-center pt-2">
       <button
-        v-if="channelFound.length > 0 && deletingChannel && !confirmDelete"
+        v-if="channelFound.length > 0 && deletingChannel && !confirmDelete && user.rol.name !== 'user'"
         class="bg-red-500 hover:bg-red-400 text-white font-semibold py-2 px-4 border border-red-500 rounded shadow mr-2 flex-1"
         @click="deleteChannel" 
       >
         Eliminar (Confirmar)
       </button>
       <button
-        v-if="channelFound.length > 0 && !deletingChannel && !confirmDelete"
+        v-if="channelFound.length > 0 && !deletingChannel && !confirmDelete && user.rol.name !== 'user'"
         class="bg-red-500 hover:bg-red-400 text-white font-semibold py-2 px-4 border border-red-500 rounded shadow mr-2 flex-1"
         @click="deleteChannelRequest" 
       >
@@ -65,6 +65,12 @@ import BaseDialog from '@/components/base-components/BaseDialog.vue';
 
 export default {
   name: 'add-member-modal',
+  props: {
+    user: {
+      type: [Object, Array],
+      required: true
+    }
+  },
   components: {
     BaseDialog,
   },
